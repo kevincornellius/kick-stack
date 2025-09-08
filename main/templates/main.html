@@ -2,3 +2,15 @@
 <p>NPM: {{ npm }}</p>
 <p>Name: {{ name }}</p>
 <p>Class: {{ class }}</p>
+
+<p>Products:</p>
+<ul>
+    {% for product in products %}
+    <div>
+        <img src="{{ product.thumbnail }}" alt="{{ product.name }}" width="100" height="100">
+        <li>{{ product.name }} - {{ product.description }} - ${{ product.price }}</li>
+    </div>
+    {% empty %}
+    <li>No products available.</li>
+    {% endfor %}
+</ul>
