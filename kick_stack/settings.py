@@ -38,6 +38,7 @@ ALLOWED_HOSTS = [
     "kevin-cornellius-kickstack.pbp.cs.ui.ac.id",
 ]
 
+CSRF_TRUSTED_ORIGINS = ["https://kevin-cornellius-kickstack.pbp.cs.ui.ac.id"]
 
 # Application definition
 
