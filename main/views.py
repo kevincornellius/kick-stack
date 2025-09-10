@@ -13,4 +13,4 @@ def show_main(request):
         "products": products,
     }
 
-    return render(request, "main.html", context)
+    return render(request, "pages/main/main.html", context)
