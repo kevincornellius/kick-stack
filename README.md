@@ -1,7 +1,85 @@
-# Tugas 2: Implementasi Model-View-Template (MVT) pada Django
-
+## Tugas Individu
 ### Kevin Cornellius Widjaja - NPM: 2406428781 - Kelas: PBP E 
 #### Link Deployment: https://kevin-cornellius-kickstack.pbp.cs.ui.ac.id/
+
+<details><summary>Tugas 3: Implementasi Form dan Data Delivery pada Django</summary>
+
+---
+## **Q1:** Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+
+**A:** Data delivery sangat penting dalam suatu aplikasi, karena berfungsi sebagai penghubung yang memastikan data berpindah dan digunakan secara akurat, konsisten, dan real-time antar komponen seperti frontend, backend, database, maupun layanan eksternal lainnya, sehingga aplikasi dapat berjalan dengan lancar dan responsif. Contohnya, saat pengguna mengunggah data melalui frontend, data tersebut dikirim ke backend untuk diproses, disimpan ke database, lalu hasilnya ditampilkan kembali ke pengguna.
+
+---
+
+## **Q2:** Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+
+**A:** Saya sendiri sangat jarang menggunakan XML, dan lebih memilih JSON. Menurut saya, struktur JSON lebih intuitif karena menggunakan `key-value`. Karena strukturnya yang sederhana juga, membuat JSON lebih ringan dan ukuran datanya lebih kecil (dibandingan dengan XML yang memerlukan opening & closing tags). Proses parsing JSON juga lebih cepat karena tidak perlu membaca struktur tag yang kompleks seperti XML. Terlebih lagi, JSON sudah didukung secara langsung oleh hampir semua bahasa pemrograman modern. Karena alasan-alasan ini juga JSON lebih populer dibandingkan XML.
+
+---
+## **Q3:** Jelaskan fungsi dari method `is_valid()` pada form Django dan mengapa kita membutuhkan method tersebut?
+
+**A:** `is_valid()` pada form Django berfungsi untuk memeriksa apakah data yang dikirim ke form sesuai dengan aturan validasi yang telah ditentukan didalam form tersebut (misalnya `required`, tipe data, `max_length`, dll). Method ini mengembalikan nilai `True` jika data valid, dan `False` jika tidak. Kita membutuhkan method ini untuk memastikan bahwa data yang akan diproses atau disimpan ke database sudah benar dan sesuai dengan yang diharapkan, sehingga mencegah kesalahan atau inkonsistensi data.
+
+Tanpa validasi ini, data yang tidak sesuai bisa masuk ke database, yang dapat menyebabkan masalah pada aplikasi, seperti error saat pengambilan data atau data yang tidak lengkap.
+
+---
+
+## **Q4:** Mengapa kita membutuhkan `csrf_token` saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan `csrf_token` pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+
+**A:** `csrf_token` dibutuhkan saat membuat form di Django untuk melindungi aplikasi dari serangan CSRF (Cross-Site Request Forgery) yaitu serangan di mana penyerang memanfaat sesi login milik korban untuk mengirim permintaan ke server secara tidak bertanggung jawab, dan server akan mengira request tersebut valid karena berasal dari sesi yang valid.
+
+`csrf_token` mencegah hal ini dengan menyisipkan token acak yang unik ke setiap permintaan POST. Dengan cara ini, penyerang tidak bisa memalsukan permintaan karena mereka tidak mengetahui token sah milik korban.
+
+---
+
+## **Q5:** Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+
+**A:** Dalam mengerjakan tugas ini, saya banyak membaca tutorial sebelumnya karena materinya sangat mirip, saya juga membaca banyak dokumentasi dari internet dan bertanya ke LLM jika ada sesuatu yang lebih detail yang ingin saya ketahui. Secara singkat, step-by-step saya adalah:
+1. Membuat fungsi & routing untuk melihat `Product` yang sudah ditambahkan dalam format XML, JSON, XML by ID, dan JSON by ID. (Dengan melihat contoh tutorial)
+2. Menambahkan halaman `/add-product` untuk menambahkan `Product` baru via form, dan `/product/<str:id>` untuk menampilkan setiap `Product` secara detail.
+3. Mempercantik UI dengan vanilla CSS dan TailwindCSS
+4. Melakukan commit ke GitHub, dan deployment ke PWS
+5. Menjawab pertanyaan dalam `README.md` & Testing API `GET` via POSTMAN
+
+---
+
+## **Q6:** Apakah ada feedback untuk asdos di tutorial 2 yang sudah kalian kerjakan?
+
+**A:** Sudah sangat baik & ada sesi live coding di awal kelas.
+
+---
+## Dokumentasi Postman:
+
+---
+### Checklist Tugas
+
+- [X] Tambahkan 4 fungsi `views` baru untuk melihat objek yang sudah ditambahkan dalam format:
+    - [X] XML
+    - [X] JSON
+    - [X] XML by ID
+    - [X] JSON by ID
+- [X] Buat **routing URL** untuk masing-masing `views` yang telah ditambahkan.
+- [X] Buat halaman yang menampilkan data objek model. Halaman ini harus memiliki:
+    - [X] Tombol "Add" yang akan mengarah ke halaman formulir.
+    - [X] Tombol "Detail" pada setiap data objek model untuk menampilkan halaman detail objek.
+- [X] Buat halaman **formulir** untuk menambahkan objek model pada aplikasi sebelumnya.
+- [X] Buat halaman yang menampilkan detail dari setiap data objek model.
+- [X] Jawab pertanyaan-pertanyaan berikut pada berkas `README.md` di _root folder_:
+    - [X] Mengapa kita memerlukan **data delivery** dalam pengimplementasian sebuah _platform_?
+    - [X] Mana yang lebih baik antara **XML** dan **JSON**? Mengapa **JSON** lebih populer dibandingkan **XML**?
+    - [X] Jelaskan fungsi dari method `is_valid()` pada formulir Django dan mengapa kita membutuhkannya.
+    - [X] Mengapa kita membutuhkan `csrf_token` saat membuat formulir di Django? Apa yang dapat terjadi jika tidak ada `csrf_token`? Bagaimana hal ini dapat dimanfaatkan oleh penyerang?
+    - [X] Jelaskan implementasi **_step-by-step_** dari daftar periksa di atas.
+    - [X] Berikan _feedback_ untuk asdos pada tutorial 2.
+- [X] Akses keempat URL di poin 2 menggunakan **Postman**.
+- [ ] Buat **_screenshot_** dari hasil akses URL pada Postman dan tambahkan ke `README.md`.
+- [X] Lakukan `add-commit-push` ke GitHub.
+</details>
+
+
+
+<details><summary>Tugas 2: Implementasi Model-View-Template (MVT) pada Django</summary>
+
 
 ---
 ## **Q1:** Jelaskan bagaimana cara kamu mengimplementasikan checklist secara step-by-step (bukan hanya sekadar mengikuti tutorial).
@@ -100,3 +178,5 @@ Dengan kemudahannya, Django juga cukup kuat untuk project besar, dan banyak digu
   - [X] Bagaimana cara kerja migrasi database di Django?
   - [X] Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
   - [X] Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?
+
+</details>
