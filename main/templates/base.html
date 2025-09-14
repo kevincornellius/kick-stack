@@ -8,6 +8,29 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+  table.bg-base-200 {
+    border-spacing: 1rem; /* adds gap between rows/columns */
+  }
+
+  table.bg-base-200 td {
+    padding: 0.5rem 0; /* optional: inner cell spacing */
+  }
+
+  table.bg-base-200 input,
+  table.bg-base-200 textarea,
+  table.bg-base-200 select {
+    border-radius: 0.75rem; /* rounded-xl */
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #256fde;
+   
+  }
+
+  table.bg-base-200 label{
+     text-align: left;
+  }
+</style>
+
   </head>
   <body>
      {% include "partials/navbar.html" %}
