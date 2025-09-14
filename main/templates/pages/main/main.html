@@ -6,7 +6,7 @@
 {% block title %}Home - KickStack{% endblock %}
 
 {% block content %}
-<div class="min-h-[200vh] flex flex-col w-full">
+<div class="min-h-[2x`x 00vh] flex flex-col w-full">
 
     <div class="w-full bg-primary-content  flex items-center justify-center gap-24 p-12">
         <div class="text-left flex flex-col  text-white bg-opacity-50 p-8 rounded">
@@ -24,25 +24,122 @@
 
     </div>
 
-    <!-- Product -->
-    <div id="products" class="w-full">
-
-        <h2 class="text-3xl font-bold text-center my-8">Our Products</h2>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8 px-8">
-            {% for product in products %}
-            <div class="bg-white rounded-2xl shadow-md">
-                <div class="w-full p-12  rounded-2xl  items-center justify-center bg-gray-100">
-                    <img src="{{ product.thumbnail }}" alt="{{ product.name }}"
-                        class=" object-contain">
-                </div>
-                <div class="p-6 flex flex-col justify-between gap-4">
-                    <h3 class="text-lg font-semibold text-gray-800">{{ product.name }}</h3>
-                    <button class="btn btn-primary  w-full" onclick="window.alert('Viewing product: {{ product.name }}')">View Product</button>
+    <!-- Products Section -->
+    <div id="products" class="w-full bg-base-100 py-16">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-base-content mb-4">Our Products</h2>
+                <p class="text-lg text-base-content/70 mb-8">Discover our premium collection of football equipment</p>
+                
+                <div class="mb-8">
+                    <a href="{% url 'main:add_product' %}" class="btn btn-primary btn-lg gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Add New Product
+                    </a>
                 </div>
             </div>
-            {% endfor %}
-        </div>
 
+            {% if products %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {% for product in products %}
+                <div class="card z-0 bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 group">
+                    <!-- Product Image -->
+                    <figure class="relative overflow-hidden bg-base-200 h-64">
+                        {% if product.thumbnail %}
+                            <img src="{{ product.thumbnail }}" 
+                                alt="{{ product.name }}"
+                                class="w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-300">
+                        {% else %}
+                            <div class="w-full h-full flex items-center justify-center">
+                                <svg class="w-16 h-16 text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Product Badges -->
+                        <div class="absolute top-3 left-3 flex flex-col gap-1">
+                            {% if product.is_featured %}
+                                <div class="badge badge-primary badge-sm">Featured</div>
+                            {% endif %}
+                            {% if product.stock == 0 %}
+                                <div class="badge badge-error badge-sm">Out of Stock</div>
+                            {% elif product.stock < 10 %}
+                                <div class="badge badge-warning badge-sm">Low Stock</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Hover -->
+                        <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                            <button class="btn btn-primary" onclick="window.location.href='product/{{ product.id }}'">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                Quick View
+                            </button>
+                        </div>
+                    </figure>
+                    
+                    <!-- Product Info -->
+                    <div class="card-body p-6">
+                        <div class="badge badge-outline badge-sm mb-2">{{ product.get_category_display }}</div>
+                        
+                        <h3 class="card-title text-lg font-bold leading-tight mb-2 line-clamp-2">
+                            {{ product.name }}
+                        </h3>
+                        
+                        <div class="space-y-2 mb-4">
+                            <p class="text-base-content/70 text-sm">{{ product.brand }}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-2xl font-bold text-primary">Rp{{ product.price }}</span>
+                                {% if product.rating > 0 %}
+                                    <div class="flex items-center gap-1">
+                                        <span class="text-sm font-medium">{{ product.rating }}</span>
+                                        <svg class="w-4 h-4 text-warning fill-current" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card-actions">
+                            <button class="btn btn-primary w-full" onclick="window.location.href='product/{{ product.id }}'">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <!-- Empty State -->
+            <div class="text-center py-16">
+                <svg class="w-24 h-24 text-base-content/30 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                <h3 class="text-3xl font-bold text-base-content mb-4">No Products Yet</h3>
+                <p class="text-lg text-base-content/70 mb-8 max-w-md mx-auto">
+                    Start building your football equipment catalogue by adding your first product.
+                </p>
+                <a href="{% url 'main:add_product' %}" class="btn btn-primary btn-lg gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add Your First Product
+                </a>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
 
 
     </div>

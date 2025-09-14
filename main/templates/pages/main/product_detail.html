@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}{{product.name}} - KickStack{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-base-100">
+    <!-- Breadcrumb  -->
+    <div class="bg-base-200 py-4">
+        <div class="container mx-auto px-4">
+            <div class="breadcrumbs text-sm">
+                <ul>
+                    <li><a href="{% url 'main:show_main' %}" class="link link-hover">Home</a></li>
+                    <li><a href="{% url 'main:show_main' %}" class="link link-hover">Products</a></li>
+                    <li><span class="text-base-content/70 capitalize">{{ product.get_category_display }}</span></li>
+                    <li class="text-base-content/70">{{ product.name }}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Product Section -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            
+            <div class="space-y-4">
+                <div class="relative group">
+                    {% if product.thumbnail %}
+                        <img src="{{ product.thumbnail }}" alt="{{ product.name }}"
+                            class="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-2xl">
+                    {% else %}
+                        <div class="w-full h-96 lg:h-[500px] bg-base-200 rounded-2xl shadow-2xl flex items-center justify-center">
+                            <svg class="w-24 h-24 text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    {% endif %}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <div class="badge badge-lg badge-primary">{{ product.get_category_display }}</div>
+                </div>
+            </div>
+
+            <!-- Product Info Section -->
+            <div class="space-y-6">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        {% if product.is_featured %}
+                            <div class="badge badge-primary">Featured</div>
+                        {% endif %}
+                        {% if product.stock > 0 %}
+                            <div class="badge badge-primary">In Stock</div>
+                        {% else %}
+                            <div class="badge badge-error">Out of Stock</div>
+                        {% endif %}
+                        {% if product.rating >= 4.5 %}
+                            <div class="badge badge-primary">Top Rated</div>
+                        {% endif %}
+                    </div>
+                    <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-base-content leading-tight">
+                        {{ product.name }}
+                    </h1>
+                    <p class="text-lg text-base-content/70">by <span class="font-semibold">{{ product.brand }}</span></p>
+                </div>
+
+                <!-- Price & Stock Section -->
+                <div class="bg-base-200 p-6 rounded-2xl">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-sm text-base-content/70 mb-1">Price</p>
+                            <span class="text-3xl font-bold text-primary">Rp{{ product.price }}</span>
+                        </div>
+                        <div>
+                            <p class="text-sm text-base-content/70 mb-1">Stock Available</p>
+                            <span class="text-2xl font-semibold {% if product.stock < 10 %}text-warning{% else %}text-success{% endif %}">
+                                {{ product.stock }} units
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Description -->
+                <div class="space-y-3">
+                    <h3 class="text-xl font-semibold text-base-content">Product Description</h3>
+                    <p class="text-base-content/80 leading-relaxed">{{ product.description }}</p>
+                </div>
+
+                <!-- Product Features -->
+                <div class="space-y-3">
+                    <h3 class="text-xl font-semibold text-base-content">Why Choose This Product?</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-sm">Professional Quality</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-sm">Fast Shipping</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-sm">30-Day Return</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="text-sm">Official {{ product.brand }} Product</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quantity Selector -->
+                <div class="space-y-3">
+                    <h3 class="text-lg font-semibold">Quantity</h3>
+                    <div class="flex items-center gap-3">
+                        <button class="btn btn-sm btn-outline" onclick="decreaseQty()">-</button>
+                        <input type="number" id="quantity" value="1" min="1" max="{{ product.stock }}" 
+                               class="input input-bordered w-20 text-center">
+                        <button class="btn btn-sm btn-outline" onclick="increaseQty()">+</button>
+                        <span class="text-sm text-base-content/70">Max: {{ product.stock }}</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-4 pt-4">
+                    {% if product.stock > 0 %}
+                        <div class="flex gap-3">
+                            <button class="btn btn-primary flex-1">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m-2.4-2L2 1M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17M17 13v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6.28"/>
+                                </svg>
+                                Add to Cart
+                            </button>
+                            <button class="btn btn-outline">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button class="btn btn-success btn-outline flex-1">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                                Buy Now
+                            </button>
+                            <a href="{% url 'main:show_main' %}" class="btn btn-ghost flex-1">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                                </svg>
+                                Back to Products
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                            </svg>
+                            <span>This item is currently out of stock. Check back later!</span>
+                        </div>
+                        <button class="btn btn-disabled w-full">Out of Stock</button>
+                    {% endif %}
+                </div>
+
+                <!-- Product Stats -->
+                <div class="stats stats-vertical lg:stats-horizontal shadow w-full">
+                    <div class="stat">
+                        <div class="stat-title">Category</div>
+                        <div class="stat-value text-sm">{{ product.get_category_display }}</div>
+                        <div class="stat-desc">Product type</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Brand</div>
+                        <div class="stat-value text-sm">{{ product.brand }}</div>
+                        <div class="stat-desc">Manufacturer</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-title">Rating</div>
+                        <div class="stat-value text-secondary">{{ product.rating }}</div>
+                        <div class="stat-desc">Out of 5.0</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function increaseQty() {
+    const qtyInput = document.getElementById('quantity');
+    const currentQty = parseInt(qtyInput.value);
+    const maxQty = parseInt(qtyInput.getAttribute('max'));
+    
+    if (currentQty < maxQty) {
+        qtyInput.value = currentQty + 1;
+    }
+}
+
+function decreaseQty() {
+    const qtyInput = document.getElementById('quantity');
+    const currentQty = parseInt(qtyInput.value);
+    const minQty = parseInt(qtyInput.getAttribute('min'));
+    
+    if (currentQty > minQty) {
+        qtyInput.value = currentQty - 1;
+    }
+}
+</script>
+
+{% endblock %}

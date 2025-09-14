@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.core import serializers
 
 from main.forms import ProductForm
@@ -28,6 +28,14 @@ def add_product(request):
 
     context = {"form": form}
     return render(request, "pages/main/add_product.html", context)
+
+
+def show_product(request, id):
+    product = get_object_or_404(Product, pk=id)
+
+    context = {"product": product}
+
+    return render(request, "pages/main/product_detail.html", context)
 
 
 def show_xml(request):
