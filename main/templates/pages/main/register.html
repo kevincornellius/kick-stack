@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Register - KickStack</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Register Card -->
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body p-8">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="avatar mb-4">
+                        <div class="w-16 p-4 rounded-full bg-primary/20 flex items-center justify-center">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="7" r="4" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></circle> <path d="M4 21V17C4 15.8954 4.89543 15 6 15H18C19.1046 15 20 15.8954 20 17V21" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>                        </div>
+                    </div>
+                    <h1 class="text-3xl font-bold text-base-content mb-2">Join KickStack</h1>
+                    <p class="text-base-content/70">Create your account to start building your catalogue</p>
+                </div>
+
+                <!-- Error Messages -->
+                {% if messages %}
+                <div class="mb-6">
+                    {% for message in messages %}
+                    <div class="alert alert-error">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{{ message }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Register Form -->
+                <form method="POST" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Username Field -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Username</span>
+                        </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <label class="label">
+                                <span class="label-text-alt text-error">{{ form.username.errors.0 }}</span>
+                            </label>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password1 Field -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Password</span>
+                        </label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <label class="label">
+                                <span class="label-text-alt text-error">{{ form.password1.errors.0 }}</span>
+                            </label>
+                        {% endif %}
+                    </div>
+
+                    <!-- Password2 Field -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Confirm Password</span>
+                        </label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <label class="label">
+                                <span class="label-text-alt text-error">{{ form.password2.errors.0 }}</span>
+                            </label>
+                        {% endif %}
+                    </div>
+
+                    <!-- Register Button -->
+                    <div class="form-control mt-8">
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                            </svg>
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Login Link -->
+                <div class="text-center mt-6">
+                    <p class="text-base-content/70">
+                        Already have an account?
+                        <a href="{% url 'main:login' %}" class="link link-primary font-semibold">
+                            Sign In
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-center mt-6">
+            <p class="text-sm text-base-content/50">
+                © 2025 KickStack. All rights reserved.
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Form input styling */
+.form-control input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background-color: var(--fallback-b1,oklch(var(--b1)));
+    color: var(--fallback-bc,oklch(var(--bc)));
+}
+
+.form-control input:focus {
+    outline: none;
+    border-color: hsl(var(--p));
+    box-shadow: 0 0 0 3px hsl(var(--p) / 0.2);
+}
+
+/* Error styling */
+.form-control input.error {
+    border-color: hsl(var(--er));
+}
+
+/* Card animation */
+.card {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Button hover effects */
+.btn:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
+</style>
+
+{% endblock content %}

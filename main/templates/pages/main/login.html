@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login - KickStack</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Login Card -->
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body p-8">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="avatar mb-4">
+                       <div class="w-16 p-3 rounded-full bg-primary/20 flex items-center justify-center">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="7" r="4" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></circle> <path d="M4 21V17C4 15.8954 4.89543 15 6 15H18C19.1046 15 20 15.8954 20 17V21" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                        </div>
+                    </div>
+                    <h1 class="text-3xl font-bold text-base-content mb-2">Welcome Back</h1>
+                    <p class="text-base-content/70">Sign in to your KickStack account</p>
+                </div>
+
+                <!-- Messages -->
+                {% if messages %}
+                <div class="mb-6">
+                    {% for message in messages %}
+                    <div class="alert alert-info">
+                        <span>{{ message }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Login Form -->
+                <form method="POST" action="" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <!-- Username Field -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Username</span>
+                        </label>
+                        {{ form.username }}
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Password</span>
+                        </label>
+                        {{ form.password }}
+                    </div>
+
+                    <!-- Login Button -->
+                    <div class="form-control mt-8">
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                            </svg>
+                            Sign In
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Register Link -->
+                <div class="text-center mt-6">
+                    <p class="text-base-content/70">
+                        Don't have an account yet?
+                        <a href="{% url 'main:register' %}" class="link link-primary font-semibold">
+                            Register Now
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+/* Form input styling */
+.form-control input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    background-color: var(--fallback-b1,oklch(var(--b1)));
+    color: var(--fallback-bc,oklch(var(--bc)));
+}
+
+.form-control input:focus {
+    outline: none;
+    border-color: hsl(var(--p));
+    box-shadow: 0 0 0 3px hsl(var(--p) / 0.2);
+}
+
+/* Card animation */
+.card {
+    animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Button hover effects */
+.btn:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
+</style>
+
+{% endblock content %}

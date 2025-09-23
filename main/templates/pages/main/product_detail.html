@@ -191,7 +191,12 @@
                         <div class="stat-value text-secondary">{{ product.rating }}</div>
                         <div class="stat-desc">Out of 5.0</div>
                     </div>
-                </div>
+                    {% if product.user %}
+                    <div class="stat">
+                        <div class="stat-title">Author</div>
+                        <div class="stat-value text-sm">{{ product.user.username }}</div>
+                    </div>
+                    {% endif %}
 
             </div>
         </div>
