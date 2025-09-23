@@ -49,6 +49,10 @@ Tanpa validasi ini, data yang tidak sesuai bisa masuk ke database, yang dapat me
 
 ---
 ## Dokumentasi Postman:
+<img width="1375" height="937" alt="image" src="https://github.com/user-attachments/assets/09328b65-9fda-49ac-b810-c5f0acbefbb0" />
+<img width="1436" height="942" alt="image" src="https://github.com/user-attachments/assets/8fe5672f-6cba-4b5f-ac7c-b25054934f61" />
+<img width="1436" height="918" alt="image" src="https://github.com/user-attachments/assets/39be01e6-263f-4324-8e74-4f002997f590" />
+<img width="1430" height="920" alt="image" src="https://github.com/user-attachments/assets/e8dbc5e4-19e9-46f1-9f27-fa392fc9011c" />
 
 ---
 ### Checklist Tugas
