@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}Edit Product - KickStack{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex flex-col w-full justify-center items-center gap-4">
+
+    <!-- Back Button -->
+    <div class="w-full max-w-md mb-4">
+        <a href="{% url 'main:show_main' %}" class="btn btn-ghost gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Back to Products
+        </a>
+    </div>
+
+    <h1 class="font-bold text-4xl">Edit Product</h1>
+    <form method="POST" class="w-full max-w-md">
+        {% csrf_token %}
+        <div class="bg-base-200 rounded-box p-6 space-y-4">
+            {{ form.as_p }}
+            
+            <div class="flex gap-3 pt-4">
+                <button type="submit" class="btn btn-primary flex-1">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Save Changes
+                </button>
+                <a href="{% url 'main:show_main' %}" class="btn btn-outline">
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<style>
+.bg-base-200 label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.bg-base-200 input, 
+.bg-base-200 textarea, 
+.bg-base-200 select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.bg-base-200 input:focus, 
+.bg-base-200 textarea:focus, 
+.bg-base-200 select:focus {
+    outline: none;
+    border-color: hsl(var(--p));
+}
+</style>
+{% endblock %}

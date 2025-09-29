@@ -20,11 +20,11 @@
             
             <div class="flex-1 text-center lg:text-left space-y-8">
                 <div class="space-y-4">
-                    <h1 class="text-5xl lg:text-7xl font-bold text-primary leading-tight">
+                    <h1 class="text-5xl lg:text-7xl font-bold text-base-content leading-tight">
                         Start
                         <span class="block text-primary">Stacking</span>
                     </h1>
-                    <p class="text-lg text-primary max-w-md">
+                    <p class="text-lg text-base-content/80 max-w-md">
                         Discover premium football gear and equipment to elevate your game
                     </p>
                 </div>
@@ -46,9 +46,9 @@
                 </div>
                 
                 <!-- Developer Info Card -->
-                <div class="bg-accent/40 backdrop-blur-md p-6 rounded-2xl border border-white/20 max-w-sm mx-auto lg:mx-0">
-                    <h3 class="font-semibold text-white mb-3">Built by</h3>
-                    <div class="space-y-1 text-white/90 text-sm">
+                <div class="bg-base-100/90 backdrop-blur-md p-6 rounded-2xl shadow-xl border border-base-300 max-w-sm mx-auto lg:mx-0">
+                    <h3 class="font-semibold text-base-content mb-3">Built by</h3>
+                    <div class="space-y-1 text-base-content/80 text-sm">
                         <p><span class="font-medium">Name:</span> {{name}}</p>
                         <p><span class="font-medium">NPM:</span> {{npm}}</p>
                         <p><span class="font-medium">Class:</span> {{class}}</p>
@@ -59,7 +59,7 @@
     </div>
 
     <!-- Products Section -->
-    <div id="products" class="w-full bg-base-100 py-16">
+    <div id="products" class="w-full  py-16">
         <div class="container mx-auto px-4">
             <div class="text-center mb-12">
                 <h2 class="text-4xl font-bold text-base-content mb-4">Our Products</h2>
@@ -131,6 +131,9 @@
                         
                         <!-- Product Badges -->
                         <div class="absolute top-3 left-3 flex flex-col gap-1">
+                            {% if user.is_authenticated and product.user == user %}
+                                <div class="badge badge-success badge-sm">My Product</div>
+                            {% endif %}
                             {% if product.is_featured %}
                                 <div class="badge badge-primary badge-sm">Featured</div>
                             {% endif %}
@@ -176,7 +179,7 @@
                             </div>
                         </div>
                         
-                        <div class="card-actions">
+                        <div class="card-actions flex-col gap-2">
                             <button class="btn btn-primary w-full" onclick="window.location.href='product/{{ product.id }}'">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -184,6 +187,27 @@
                                 </svg>
                                 View Details
                             </button>
+                            
+                            {% if user.is_authenticated and product.user == user %}
+                            <div class="flex gap-2 w-full">
+                                <a href="{% url 'main:edit_product' product.pk %}" class="flex-1">
+                                    <button class="btn btn-outline btn-sm w-full">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                        </svg>
+                                        Edit
+                                    </button>
+                                </a>
+                                <a href="{% url 'main:delete_product' product.pk %}" class="flex-1">
+                                    <button class="btn btn-outline btn-error btn-sm w-full">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                        Delete
+                                    </button>
+                                </a>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
