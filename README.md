@@ -4,34 +4,146 @@
 
 
 
-<details><summary>TODO: Tugas 5: Desain Web menggunakan HTML, CSS dan Framework CSS</summary>
+<details><summary>Tugas 5: Desain Web menggunakan HTML, CSS dan Framework CSS</summary>
 
 ---
 ## **Q1:** Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
 
-**A**:
+**A**: Urutan prioritas pengambilan CSS selector adalah sebagai berikut:
+1. `!important` - Jika sebuah aturan CSS memiliki `!important`, maka aturan tersebut akan memiliki prioritas tertinggi, mengabaikan aturan lain. 
+Contoh: 
+```css
+p { color: blue !important; }
+```
+  
+2. Inline Styles - Gaya yang diterapkan langsung pada elemen HTML menggunakan atribut `style` memiliki prioritas lebih tinggi daripada aturan dalam file CSS eksternal atau internal. 
+Contoh: 
+```html
+<p style="color: red;">Teks</p>
+```
+
+3. ID Selectors - Selector yang menggunakan ID (`#id`) memiliki prioritas lebih tinggi daripada class, attribute, dan pseudo-class selectors. 
+Contoh: 
+```css
+#header { color: blue; }
+```
+
+4. Class, Attribute, dan Pseudo-class Selectors - Selector yang menggunakan class (`.class`), atribut (`[type="text"]`), atau pseudo-class (`:hover`) memiliki prioritas lebih rendah daripada ID selectors tetapi lebih tinggi daripada element selectors.
+Contoh:
+```css
+.teks { color: green; }
+[type="text"] { ... }
+p:hover { ... }
+```
+
+5. Element Selectors - Selector yang menggunakan nama elemen HTML (seperti `div`, `p`, `h1`) memiliki prioritas paling rendah.
+Contoh:
+```css
+p { color: black; }
+p::first-letter { ... }
+```
+
+> Jika specificity sama, yang didefinisikan terakhir dalam CSS (lebih bawah dalam file atau terakhir dimuat) akan menang.
+
+> Selector gabungan menambah specificity: `div#header .menu a:hover > #header a.`
 
 ---
 
 ## **Q2**: Mengapa *responsive design* menjadi konsep yang penting dalam pengembangan aplikasi *web*? Berikan contoh aplikasi yang sudah dan belum menerapkan *responsive design*, serta jelaskan mengapa!
 
-**A**:
+**A**: Responsive design penting karena memastikan aplikasi web dapat diakses dan digunakan dengan baik di berbagai perangkat (desktop, tablet, smartphone) dengan ukuran layar dan resolusi yang berbeda. Dengan responsive design, elemen-elemen pada halaman web dapat menyesuaikan tata letak, ukuran, dan interaktivitasnya sesuai dengan perangkat yang digunakan, sehingga meningkatkan pengalaman pengguna (user experience).
+
+
+Contoh aplikasi yang sudah menerapkan responsive design adalah [YouTube](https://www.youtube.com) dan [Laman PBP 25/26](https://pbp-fasilkom-ui.github.io/ganjil-2026/). Kedua situs ini menyesuaikan tata letak dan ukuran elemen secara otomatis berdasarkan ukuran layar perangkat, sehingga pengguna dapat dengan mudah menavigasi dan mengakses konten tanpa harus memperbesar atau memperkecil halaman.
+
+Contoh aplikasi yang belum menerapkan responsive design adalah [SiakNG](https://academic.ui.ac.id). Situs ini memiliki tata letak yang tetap dan tidak menyesuaikan dengan ukuran layar perangkat, sehingga pada perangkat dengan layar kecil (seperti smartphone), pengguna harus memperbesar halaman untuk melihat konten, yang dapat mengurangi kenyamanan dan kemudahan penggunaan.
 
 ---
 
 ## **Q3**: Jelaskan perbedaan antara *margin*, *border*, dan *padding*, serta cara untuk mengimplementasikan ketiga hal tersebut!
-**A**:
+**A**: Dalam CSS, *margin*, *border*, dan *padding* adalah properti yang digunakan untuk mengatur ruang di sekitar elemen HTML, tetapi mereka memiliki fungsi dan lokasi yang berbeda:
+
+1. Margin: 
+   - Margin adalah ruang di luar border elemen. 
+   - Fungsinya untuk memberikan jarak antara elemen dengan elemen lainnya di sekitarnya.
+   - Cara mengimplementasikan margin:
+     ```css
+     .element {
+       margin: 20px; /* Memberikan margin 20px di semua sisi */
+       margin-top: 10px; /* Margin atas 10px */
+       margin-right: 15px; /* Margin kanan 15px */
+       margin-bottom: 10px; /* Margin bawah 10px */
+       margin-left: 15px; /* Margin kiri 15px */
+     }
+     ```
+2. Border:
+   - Border adalah garis yang mengelilingi elemen, berada di antara padding dan margin.
+   - Fungsinya untuk memberikan batas visual pada elemen.
+   - Cara mengimplementasikan border:
+     ```css
+     .element {
+       border: 2px solid black; /* Border 2px, solid, warna hitam */
+       border-top: 1px dashed red; /* Border atas 1px, dashed, warna merah */
+       border-radius: 5px; /* Membuat sudut border melengkung */
+     }
+     ```
+
+3. Padding:
+    - Padding adalah ruang di dalam border elemen, antara konten elemen dan border.
+    - Fungsinya untuk memberikan jarak antara konten elemen dengan border.
+    - Cara mengimplementasikan padding:
+      ```css
+      .element {
+        padding: 15px; /* Memberikan padding 15px di semua sisi */
+        padding-top: 10px; /* Padding atas 10px */
+        padding-right: 20px; /* Padding kanan 20px */
+        padding-bottom: 10px; /* Padding bawah 10px */
+        padding-left: 20px; /* Padding kiri 20px */
+      }
+      ```
 
 ---
 
 ## **Q4**: Jelaskan konsep *flex box* dan *grid layout* beserta kegunaannya!
 
-**A**:
+**A**: 
+- **Flexbox (Flexible Box Layout)** adalah model tata letak satu dimensi yang dirancang untuk mengatur elemen dalam satu baris atau kolom.
+  - Kegunaan Flexbox:
+    - Mengatur elemen secara horizontal atau vertikal dengan mudah.
+    - Menyediakan kontrol yang baik atas perataan, distribusi ruang, dan ukuran elemen.
+    - Memudahkan pembuatan tata letak yang responsif.
+  - Contoh penggunaan Flexbox:
+    ```css
+    .container {
+      display: flex; /* Mengaktifkan Flexbox */
+      justify-content: center; /* Mengatur elemen di tengah secara horizontal */
+      align-items: center; /* Mengatur elemen di tengah secara vertikal */
+    }
+    ```
+- **Grid Layout** adalah model tata letak dua dimensi yang memungkinkan elemen untuk disusun dalam baris dan kolom. Grid Layout sangat berguna untuk membuat tata letak yang kompleks dan terstruktur. Beberapa kegunaan Grid Layout antara lain:
+  - Mengatur elemen dalam grid yang terdiri dari baris dan kolom.
+  - Memudahkan pembuatan tata letak yang responsif dengan menggunakan unit ukuran yang fleksibel.
+  - Menyediakan kontrol yang lebih baik atas posisi dan ukuran elemen dalam grid.
+  - Contoh penggunaan Grid Layout:
+    ```css
+    .container {
+      display: grid; /* Mengaktifkan Grid Layout */
+      grid-template-columns: repeat(3, 1fr); /* Membuat 3 kolom dengan lebar yang sama */
+      gap: 10px; /* Jarak antara elemen grid */
+    }
+    ```
 
 ---
+
 ## **Q5**: Jelaskan bagaimana cara kamu mengimplementasikan *checklist* di atas secara *step-by-step* (bukan hanya sekadar mengikuti tutorial)!
 
-**A**:
+**A**: Dalam mengerjakan tugas ini, saya banyak membaca tutorial sebelumnya karena materinya sangat mirip, saya juga membaca banyak dokumentasi dari internet dan bertanya ke LLM jika ada sesuatu yang lebih detail yang ingin saya ketahui. Secara singkat, step-by-step saya adalah:
+
+1. Mengimplementasikan fungsi untuk menghapus dan mengedit product di `views.py` dan menambahkan routing URL di `urls.py`.
+2. Kustomisasi desain pada template HTML yang telah dibuat pada tugas-tugas sebelumnya menggunakan TailwindCSS dan DaisyUI.
+3. Setup Static Files di Django untuk menghubungkan file CSS eksternal & Assets.
+4. Menjawab beberapa pertanyaan dalam `README.md`.
+5. Melakukan commit ke GitHub dan deployment ke PWS.
 
 ---
 ## Checklist untuk tugas ini adalah sebagai berikut:
@@ -46,13 +158,13 @@
     - [X] Untuk setiap *card product*, buatlah dua buah *button* untuk mengedit dan menghapus **product** pada *card* tersebut!
   - [X] Buatlah *navigation bar* (navbar) untuk fitur-fitur pada aplikasi yang *responsive* terhadap perbedaan ukuran *device*, khususnya *mobile* dan *desktop*.
 - [X] Menjawab beberapa pertanyaan berikut pada `README.md` pada *root folder* (silakan modifikasi `README.md` yang telah kamu buat sebelumnya; tambahkan subjudul untuk setiap tugas).
-  - [ ] Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
-  - [ ] Mengapa *responsive design* menjadi konsep yang penting dalam pengembangan aplikasi *web*? Berikan contoh aplikasi yang sudah dan belum menerapkan *responsive design*, serta jelaskan mengapa!
-  - [ ] Jelaskan perbedaan antara *margin*, *border*, dan *padding*, serta cara untuk mengimplementasikan ketiga hal tersebut!
-  - [ ] Jelaskan konsep *flex box* dan *grid layout* beserta kegunaannya!
-  - [ ] Jelaskan bagaimana cara kamu mengimplementasikan *checklist* di atas secara *step-by-step* (bukan hanya sekadar mengikuti tutorial)!
+  - [X] Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+  - [X] Mengapa *responsive design* menjadi konsep yang penting dalam pengembangan aplikasi *web*? Berikan contoh aplikasi yang sudah dan belum menerapkan *responsive design*, serta jelaskan mengapa!
+  - [X] Jelaskan perbedaan antara *margin*, *border*, dan *padding*, serta cara untuk mengimplementasikan ketiga hal tersebut!
+  - [X] Jelaskan konsep *flex box* dan *grid layout* beserta kegunaannya!
+  - [X] Jelaskan bagaimana cara kamu mengimplementasikan *checklist* di atas secara *step-by-step* (bukan hanya sekadar mengikuti tutorial)!
 
-- [ ] Melakukan `add-commit-push` ke GitHub.
+- [X] Melakukan `add-commit-push` ke GitHub.
 </details>
 <details><summary>Tugas 4: Implementasi Autentikasi, Session, dan Cookies pada Django</summary>
 
@@ -227,7 +339,7 @@ Tanpa validasi ini, data yang tidak sesuai bisa masuk ke database, yang dapat me
     - [X] Jelaskan implementasi **_step-by-step_** dari daftar periksa di atas.
     - [X] Berikan _feedback_ untuk asdos pada tutorial 2.
 - [X] Akses keempat URL di poin 2 menggunakan **Postman**.
-- [ ] Buat **_screenshot_** dari hasil akses URL pada Postman dan tambahkan ke `README.md`.
+- [X] Buat **_screenshot_** dari hasil akses URL pada Postman dan tambahkan ke `README.md`.
 - [X] Lakukan `add-commit-push` ke GitHub.
 </details>
 
