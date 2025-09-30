@@ -101,7 +101,10 @@ Contoh aplikasi yang belum menerapkan responsive design adalah [SiakNG](https://
         padding-left: 20px; /* Padding kiri 20px */
       }
       ```
+      
+<img width="368" height="auto" alt="image" src="https://github.com/user-attachments/assets/c02fa582-5b1b-4c82-bd22-901f44225a29" />
 
+Source: [Hostinger](https://www.hostinger.com/my/tutorials/padding-vs-margin)
 ---
 
 ## **Q4**: Jelaskan konsep *flex box* dan *grid layout* beserta kegunaannya!
@@ -132,7 +135,9 @@ Contoh aplikasi yang belum menerapkan responsive design adalah [SiakNG](https://
       gap: 10px; /* Jarak antara elemen grid */
     }
     ```
+<img width="500" height="auto" alt="image" src="https://github.com/user-attachments/assets/bc6a4553-995b-4b47-b317-c9c579871942" />
 
+Source: [Codepolitan](https://www.codepolitan.com/blog/css-grid-vs-flexbox-5b4336849183d/)
 ---
 
 ## **Q5**: Jelaskan bagaimana cara kamu mengimplementasikan *checklist* di atas secara *step-by-step* (bukan hanya sekadar mengikuti tutorial)!
