@@ -8,11 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5/themes.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
 
   </head>
   <body class="">
      {% include "partials/navbar.html" %}
-  <main class=" pt-20 w-full ">
+  <main class=" pt-0 w-full ">
     {% block content %}{% endblock %}
   </main>
     <footer class="bg-gray-800 text-white p-4 text-center">

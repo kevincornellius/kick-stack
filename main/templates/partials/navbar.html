@@ -1,12 +1,94 @@
-<nav id="navbar" class="fixed top-0 z-50 left-0 w-full bg-white shadow p-4 flex justify-around items-center transition-transform duration-300">
- <div class="flex items-center justify-center space-x-2">
-    <svg fill="none" height="48" viewBox="0 0 39 48" width="30" xmlns="http://www.w3.org/2000/svg"><g stroke="#1570ef" stroke-linejoin="round" stroke-width="3"><path d="m27.3735 3.34375 10.1265 5.62501-.0007 11.24954m-10.1258-16.87455.002 11.24965m-.002-11.24965-25.8735 13.49965.00196 11.2497m35.99734-7.8748-10.1238-5.6249m10.1238 5.6249-25.8735 13.4996-10.12384-5.6248m25.87354-13.4997-25.87354 13.4997"/><path d="m11.6265 44.9687-10.12649-5.625.0007-11.2495m10.12579 16.8745-.002-11.2496m.002 11.2496 25.8735-13.4996-.002-11.2497m-35.99729 7.8748 10.12379 5.6249m-10.12379-5.6249 25.87349-13.4996 10.1238 5.6248m-25.8735 13.4997 25.8735-13.4997" opacity=".5"/></g></svg>    
-    <h1 class="text-xl font-bold mb-2">KickStack</h1>
- </div>
-  <div>
-    <a href="/" class="px-3">Home</a>
+<nav id="navbar" class="navbar bg-primary text-white shadow-lg fixed top-0 z-50 w-full transition-transform duration-300">
+  <div class="navbar-start">
+    <!-- Mobile Menu Button -->
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden text-white hover:bg-white/20">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/>
+        </svg>
+      </div>
+      <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52 text-primary ">
+        <li><a href="{% url 'main:show_main' %}" class="scroll-link">Home</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'main:add_product' %}">Add Product</a></li>
+          <li><a href="{% url 'main:show_main' %}?filter=all#products">All Products</a></li>
+          <li><a href="{% url 'main:show_main' %}?filter=my#products">My Products</a></li>
+          <li><a class="text-white font-bold bg-red-500" href="{% url 'main:logout' %}">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'main:login' %}">Login</a></li>
+          <li><a href="{% url 'main:register' %}">Register</a></li>
+        {% endif %}
+      </ul>
+    </div>
+    
+    <!-- Logo -->
+    <div class="flex items-center space-x-2 ml-2">
+      <svg fill="none" height="32" viewBox="0 0 39 48" width="24" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="white" stroke-linejoin="round" stroke-width="3">
+          <path d="m27.3735 3.34375 10.1265 5.62501-.0007 11.24954m-10.1258-16.87455.002 11.24965m-.002-11.24965-25.8735 13.49965.00196 11.2497m35.99734-7.8748-10.1238-5.6249m10.1238 5.6249-25.8735 13.4996-10.12384-5.6248m25.87354-13.4997-25.87354 13.4997"/>
+          <path d="m11.6265 44.9687-10.12649-5.625.0007-11.2495m10.12579 16.8745-.002-11.2496m.002 11.2496 25.8735-13.4996-.002-11.2497m-35.99729 7.8748 10.12379 5.6249m-10.12379-5.6249 25.87349-13.4996 10.1238 5.6248m-25.8735 13.4997 25.8735-13.4997" opacity=".5"/>
+        </g>
+      </svg>
+      <span class="text-xl font-bold text-white">KickStack</span>
+    </div>
+  </div>
+  
+  <!-- Desktop Menu -->
+  <div class="navbar-center hidden lg:flex">
+    <ul class="menu menu-horizontal px-1">
+      <li><a href="{% url 'main:show_main' %}" class="btn btn-ghost text-white hover:bg-white/20 scroll-link">Home</a></li>
+      <li><a href="{% url 'main:show_main' %}?filter=all#products" class="btn btn-ghost text-white hover:bg-white/20">All Products</a></li>
+      {% if user.is_authenticated %}
+        <li><a href="{% url 'main:show_main' %}?filter=my#products" class="btn btn-ghost text-white hover:bg-white/20">My Products</a></li>
+      {% endif %}
+    </ul>
+  </div>
+  
+  <div class="navbar-end">
+    {% if user.is_authenticated %}
+      <!-- Add Product Button -->
+      <a href="{% url 'main:add_product' %}" class="btn btn-white btn-sm mr-2 hidden sm:flex text-primary hover:bg-white/90">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Add Product
+      </a>
+      
+      <!-- User Dropdown -->
+      <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+          <div class="w-8 rounded-full bg-white/20 flex items-center justify-center p-1">
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <circle cx="12" cy="7" r="4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></circle> <path d="M4 21V17C4 15.8954 4.89543 15 6 15H18C19.1046 15 20 15.8954 20 17V21" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>          </div>
+        </div>
+        <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-primary">
+          <li>
+            <div class="flex flex-col items-start p-2">
+              <span class="font-medium text-sm">{{ user.username }}</span>
+              <span class="text-xs text-base-content/70">{{ user.email|default:"User" }}</span>
+            </div>
+          </li>
+          <li><a href="{% url 'main:show_main' %}?filter=my#products">My Products</a></li>
+          <li><a href="{% url 'main:add_product' %}" class="sm:hidden">Add Product</a></li>
+          <li>
+            <a href="{% url 'main:logout' %}" class="text-error">
+              <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              Logout
+            </a>
+          </li>
+        </ul>
+      </div>
+    {% else %}
+      <!-- Guest User Buttons -->
+      <div class="flex gap-2">
+        <a href="{% url 'main:login' %}" class="btn btn-ghost btn-sm text-white hover:bg-white/20">Login</a>
+        <a href="{% url 'main:register' %}" class="btn btn-white btn-sm text-primary hover:bg-white/90">Register</a>
+      </div>
+    {% endif %}
   </div>
 </nav>
+
 
 <script>
   let lastScrollTop = 0;
@@ -15,13 +97,89 @@
   window.addEventListener("scroll", function () {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-    if (scrollTop > lastScrollTop) {
-      // scrolling down: hide navbar
+    if (scrollTop > lastScrollTop && scrollTop > 100) {
       navbar.style.transform = "translateY(-100%)";
+      
+      const mobileDropdown = document.querySelector('.dropdown [tabindex="0"]');
+      if (mobileDropdown) {
+        mobileDropdown.blur();
+      }
     } else {
       // scrolling up: show navbar
       navbar.style.transform = "translateY(0)";
     }
-    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // avoid negative
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', function(event) {
+    const dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach(dropdown => {
+      if (!dropdown.contains(event.target)) {
+        const content = dropdown.querySelector('[tabindex="0"]');
+        if (content) content.blur();
+      }
+    });
+  });
+
+  // Active link highlighting
+  const currentPath = window.location.pathname;
+  const navLinks = document.querySelectorAll('.navbar a[href]');
+  
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href === currentPath || (currentPath === '/' && href.includes('show_main'))) {
+      link.classList.add('active');
+    }
+  });
+
+  // Smooth scrolling for anchor links
+  document.addEventListener('DOMContentLoaded', function() {
+    const scrollLinks = document.querySelectorAll('a[href*="#"]');
+    
+    scrollLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        const currentPage = window.location.pathname;
+        
+        if (href.includes('#')) {
+          const [page, anchor] = href.split('#');
+          const targetElement = document.getElementById(anchor);
+          
+          if (targetElement && (page === '' || page === currentPage || page.includes('show_main'))) {
+            e.preventDefault();
+            
+            const navbarHeight = navbar.offsetHeight;
+            const targetPosition = targetElement.offsetTop - navbarHeight - 20;
+            
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            });
+            
+            const mobileMenu = document.querySelector('.dropdown[tabindex="0"]');
+            if (mobileMenu) mobileMenu.blur();
+          }
+        }
+      });
+    });
+  });
+
+  // Handle direct anchor navigation (when page loads with #section)
+  window.addEventListener('load', function() {
+    if (window.location.hash) {
+      const targetElement = document.querySelector(window.location.hash);
+      if (targetElement) {
+        setTimeout(() => {
+          const navbarHeight = navbar.offsetHeight;
+          const targetPosition = targetElement.offsetTop - navbarHeight - 20;
+          
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+        }, 100);
+      }
+    }
   });
 </script>

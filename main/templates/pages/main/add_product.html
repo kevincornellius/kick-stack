@@ -5,58 +5,200 @@
 {% block title %}Add Product - KickStack{% endblock %}
 
 {% block content %}
-<div class="min-h-screen flex flex-col w-full justify-center items-center gap-4 p-8">
+<div class="min-h-screen bg-gradient-to-br from-base-200 to-base-300 flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl">
+        <!-- Back Button -->
+        <div class="mb-6">
+            <a href="{% url 'main:show_main' %}" class="btn btn-ghost gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Products
+            </a>
+        </div>
 
-    <div class="w-full max-w-md mb-4">
-        <a href="{% url 'main:show_main' %}" class="btn btn-ghost gap-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-            </svg>
-            Back to Products
-        </a>
-    </div>
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="avatar mb-4">
+                <div class="w-16 rounded-full bg-primary/20 flex items-center justify-center p-2">
+                  <svg viewBox="0 0 24 24" id="_003_ECOMMERCE_03" data-name="003_ECOMMERCE_03" xmlns="http://www.w3.org/2000/svg" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><title>003_085</title><path d="M11,21H4a.99974.99974,0,0,1-1-1V4A.99974.99974,0,0,1,4,3H20a.99974.99974,0,0,1,1,1v7a1,1,0,0,1-2,0V5H5V19h6a1,1,0,0,1,0,2Z" style="fill:#333"></path><polygon points="10 4 10 10 12 8 14 10 14 4 10 4" style="fill:#333"></polygon><path d="M17,21a.99974.99974,0,0,1-1-1V14a1,1,0,0,1,2,0v6A.99974.99974,0,0,1,17,21Z" style="fill:#333"></path><path d="M20,18H14a1,1,0,0,1,0-2h6a1,1,0,0,1,0,2Z" style="fill:#333"></path></g></svg>
+                </div>
+            </div>
+            <h1 class="text-3xl font-bold text-base-content mb-2">Add New Product</h1>
+            <p class="text-base-content/70">Fill in the details below to add a product to your catalogue</p>
+        </div>
 
-    <h1 class="font-bold text-4xl">Add Product</h1>
-    <form method="POST" class="w-full max-w-md">
-        {% csrf_token %}
-        <div class="bg-base-200 rounded-box p-6 space-y-4">
-            {{ form.as_p }}
-            
-            <div class="flex gap-3 pt-4">
-                <button type="submit" class="btn btn-primary flex-1">
-                    Add Product
-                </button>
-                <a href="{% url 'main:show_main' %}" class="btn btn-outline">
-                    Cancel
-                </a>
+        <!-- Form Card -->
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body p-8">
+                <form method="POST" class="space-y-6" id="productForm">
+                    {% csrf_token %}
+                    
+                    <!-- Product Name -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Product Name</span>
+                            <span class="label-text-alt text-error">*</span>
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <label class="label">
+                                <span class="label-text-alt text-error">{{ form.name.errors.0 }}</span>
+                            </label>
+                        {% endif %}
+                    </div>
+
+                    <!-- Brand and Category Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-semibold">Brand</span>
+                                <span class="label-text-alt text-error">*</span>
+                            </label>
+                            {{ form.brand }}
+                            {% if form.brand.errors %}
+                                <label class="label">
+                                    <span class="label-text-alt text-error">{{ form.brand.errors.0 }}</span>
+                                </label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-semibold">Category</span>
+                                <span class="label-text-alt text-error">*</span>
+                            </label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <label class="label">
+                                    <span class="label-text-alt text-error">{{ form.category.errors.0 }}</span>
+                                </label>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Price and Stock Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-semibold">Price (IDR)</span>
+                                <span class="label-text-alt text-error">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/70">Rp</span>
+                                {{ form.price }}
+                            </div>
+                            {% if form.price.errors %}
+                                <label class="label">
+                                    <span class="label-text-alt text-error">{{ form.price.errors.0 }}</span>
+                                </label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-semibold">Stock Quantity</span>
+                                <span class="label-text-alt text-error">*</span>
+                            </label>
+                            {{ form.stock }}
+                            {% if form.stock.errors %}
+                                <label class="label">
+                                    <span class="label-text-alt text-error">{{ form.stock.errors.0 }}</span>
+                                </label>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Rating and Thumbnail Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-semibold">Rating (0.0 - 5.0)</span>
+                            </label>
+                            {{ form.rating }}
+                            {% if form.rating.errors %}
+                                <label class="label">
+                                    <span class="label-text-alt text-error">{{ form.rating.errors.0 }}</span>
+                                </label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text font-semibold">Product Image URL</span>
+                            </label>
+                            {{ form.thumbnail }}
+                            {% if form.thumbnail.errors %}
+                                <label class="label">
+                                    <span class="label-text-alt text-error">{{ form.thumbnail.errors.0 }}</span>
+                                </label>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text font-semibold">Product Description</span>
+                            <span class="label-text-alt text-error">*</span>
+                        </label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <label class="label">
+                                <span class="label-text-alt text-error">{{ form.description.errors.0 }}</span>
+                            </label>
+                        {% endif %}
+                        <label class="label">
+                            <span class="label-text-alt">Describe the product features, quality, and benefits</span>
+                        </label>
+                    </div>
+
+                    <!-- Featured Product -->
+                    <div class="form-control">
+                        <label class="label cursor-pointer justify-start gap-3">
+                            {{ form.is_featured }}
+                            <div>
+                                <span class="label-text font-semibold">Featured Product</span>
+                                <div class="label-text-alt">Mark this product as featured to highlight it</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-control mt-8">
+                        <button type="submit" class="btn btn-primary btn-block btn-lg">
+                            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Add Product to Catalogue
+                        </button>
+                    </div>
+
+                    <div class="form-control">
+                        <a href="{% url 'main:show_main' %}" class="btn btn-outline btn-block">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
             </div>
         </div>
-    </form>
 
+    </div>
 </div>
 
-<style>
-.bg-base-200 label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
 
-.bg-base-200 input, 
-.bg-base-200 textarea, 
-.bg-base-200 select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.75rem;
-    margin-bottom: 1rem;
-}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('productForm');
 
-.bg-base-200 input:focus, 
-.bg-base-200 textarea:focus, 
-.bg-base-200 select:focus {
-    outline: none;
-    border-color: hsl(var(--p));
-}
-</style>
+    form.addEventListener('submit', function() {
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = `
+            <span class="loading loading-spinner loading-sm mr-2"></span>
+            Adding Product...
+        `;
+        submitBtn.disabled = true;
+    });
+});
+</script>
 {% endblock %}
