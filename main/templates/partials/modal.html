@@ -1,0 +1,146 @@
+<!-- Modal -->
+<div id="crudModal" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800/50">
+  <div id="crudModalContent" class="bg-white rounded-lg shadow-lg w-5/6 sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 max-h-[80%]  overflow-y-auto">
+    <!-- Modal header -->
+    <div class="flex items-center justify-between p-4 border-b">
+      <div>
+        <h3 class="text-xl font-semibold text-gray-900">
+          Add New Product
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">Add a football product to your catalogue</p>
+      </div>
+      <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" onclick="hideModal()">
+        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="sr-only">Close modal</span>
+      </button>
+    </div>
+    <!-- Modal body -->
+    <div class="px-6 py-4 space-y-6 form-style">
+      <form id="productForm">
+        <!-- Product Name -->
+        <div class="mb-4">
+          <label for="name" class="block text-sm font-medium text-gray-700">Product Name *</label>
+          <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter product name" required>
+        </div>
+        
+        <!-- Brand and Category Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="brand" class="block text-sm font-medium text-gray-700">Brand *</label>
+            <input type="text" id="brand" name="brand" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter brand name" required>
+          </div>
+          <div>
+            <label for="category" class="block text-sm font-medium text-gray-700">Category *</label>
+            <select id="category" name="category" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" required>
+              <option value="">Choose a category</option>
+              <option value="football">Football</option>
+              <option value="jersey">Jersey</option>
+              <option value="boots">Boots</option>
+              <option value="equipment">Equipment</option>
+              <option value="accessories">Accessories</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Price and Stock Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="price" class="block text-sm font-medium text-gray-700">Price (IDR) *</label>
+            <input type="number" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="0" min="0" step="0.01" required>
+          </div>
+          <div>
+            <label for="stock" class="block text-sm font-medium text-gray-700">Stock Quantity *</label>
+            <input type="number" id="stock" name="stock" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="0" min="0" required>
+          </div>
+        </div>
+        
+        <!-- Rating and Thumbnail Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="rating" class="block text-sm font-medium text-gray-700">Rating (0.0 - 5.0)</label>
+            <input type="number" id="rating" name="rating" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="0.0" min="0" max="5" step="0.1" value="0">
+          </div>
+          <div>
+            <label for="thumbnail" class="block text-sm font-medium text-gray-700">Product Image URL</label>
+            <input type="url" id="thumbnail" name="thumbnail" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://example.com/image.jpg">
+          </div>
+        </div>
+        
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="description" class="block text-sm font-medium text-gray-700">Product Description *</label>
+          <textarea id="description" name="description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Describe the product features, quality, and benefits" required></textarea>
+        </div>
+        
+        <!-- Featured Product -->
+        <div class="mb-4">
+          <div class="flex items-center">
+            <input id="is_featured" name="is_featured" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded">
+            <label for="is_featured" class="ml-2 text-sm font-medium text-gray-900">Featured Product</label>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Modal footer -->
+    <div class="flex flex-col sm:flex-row gap-4 p-6 border-t border-gray-200 rounded-b">
+      <button type="button" id="cancelButton" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center" onclick="hideModal()">Cancel</button>
+      <button type="submit" id="submitProduct" form="productForm" class="order-1 sm:order-2 flex-1 bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-primary/90 transition-colors">Add Product</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showModal() {
+      const modal = document.getElementById('crudModal');
+      const modalContent = document.getElementById('crudModalContent');
+
+      modal.classList.remove('hidden'); 
+      setTimeout(() => {
+        modalContent.classList.remove('opacity-0', 'scale-95');
+        modalContent.classList.add('opacity-100', 'scale-100');
+      }, 50); 
+  }
+
+  function hideModal() {
+      const modal = document.getElementById('crudModal');
+      const modalContent = document.getElementById('crudModalContent');
+
+      modalContent.classList.remove('opacity-100', 'scale-100');
+      modalContent.classList.add('opacity-0', 'scale-95');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 150); 
+  }
+
+  async function addProductEntry() {
+    await fetch("{% url 'main:add_product_ajax' %}", {
+      method: "POST",
+      body: new FormData(document.querySelector('#productForm')),
+    })
+
+    document.getElementById("productForm").reset();
+    hideModal();
+      
+    // Show toast notification
+    showToast('Product added successfully!', '', 'success');
+
+    // Dispatch custom event to notify main.html about new data
+    document.dispatchEvent(new CustomEvent('productAdded'));
+
+    return false;
+  }
+
+  document.addEventListener('productAdded', function() {
+    // Refresh data without page reload
+    fetchProductsFromServer();
+});
+
+document.getElementById("productForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    addProductEntry();
+})
+
+</script>

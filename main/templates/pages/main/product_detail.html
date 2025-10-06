@@ -1,69 +1,78 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{product.name}} - KickStack{% endblock %}
+{% block meta %}
+<title>Product Detail - KickStack</title>
+{% endblock meta %}
 
 {% block content %}
-<div  class="min-h-screen bg-base-100">
-    <!-- Breadcrumb  -->
+<div class="min-h-screen bg-base-100">
+    <!-- Breadcrumb -->
     <div class="bg-base-200 py-4">
         <div class="container mx-auto px-4">
-            <div class="breadcrumbs text-sm">
-                <ul>
-                    <li><a href="{% url 'main:show_main' %}" class="link link-hover">Home</a></li>
-                    <li><a href="{% url 'main:show_main' %}" class="link link-hover">Products</a></li>
-                    <li><span class="text-base-content/70 capitalize">{{ product.get_category_display }}</span></li>
-                    <li class="text-base-content/70">{{ product.name }}</li>
-                </ul>
+            <div class="mb-6">
+                <a href="{% url 'main:show_main' %}" class="text-base-content/70 hover:text-base-content font-medium transition-colors">
+                    ← Back to Products
+                </a>
             </div>
         </div>
     </div>
+    
+    <!-- Loading State -->
+    <div id="loading-state" class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+            <svg class="animate-spin h-8 w-8 text-primary inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            <p class="text-base-content/70 mt-3">Loading product details...</p>
+        </div>
+    </div>
 
-    <!-- Main Product Section -->
-    <div class="container mx-auto px-4 py-8">
+    <!-- Error State -->
+    <div id="error-state" class="container mx-auto px-4 py-8 hidden">
+        <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+            <div class="w-16 h-16 mx-auto mb-4">
+                <div class="text-error text-5xl">⚠️</div>
+            </div>
+            <h3 class="text-lg font-medium text-base-content mb-2">Failed to load product</h3>
+            <p class="text-base-content/70 mb-4">Please try again later.</p>
+            <button onclick="loadProductDetail()" class="btn btn-primary">Retry</button>
+        </div>
+    </div>
+    
+    <!-- Product Content -->
+    <div id="product-content" class="container mx-auto px-4 py-8 hidden">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             
+            <!-- Product Image Section -->
             <div class="space-y-4">
                 <div class="relative group">
-                    {% if product.thumbnail %}
-                        <img src="{{ product.thumbnail }}" alt="{{ product.name }}"
-                            class="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-2xl">
-                    {% else %}
-                        <div class="w-full h-96 lg:h-[500px] bg-base-200 rounded-2xl shadow-2xl flex items-center justify-center">
-                            <svg class="w-24 h-24 text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                    {% endif %}
+                    <div id="product-image-container">
+                        <!-- Dynamic image will be inserted here -->
+                    </div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </div>
                 
                 <div class="flex justify-center">
-                    <div class="badge badge-lg badge-primary">{{ product.get_category_display }}</div>
+                    <div id="category-badge" class="badge badge-lg badge-primary">
+                        <!-- Category will be inserted here -->
+                    </div>
                 </div>
             </div>
 
             <!-- Product Info Section -->
             <div class="space-y-6">
                 <div class="space-y-3">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        {% if product.is_featured %}
-                            <div class="badge badge-primary">Featured</div>
-                        {% endif %}
-                        {% if product.stock > 0 %}
-                            <div class="badge badge-primary">In Stock</div>
-                        {% else %}
-                            <div class="badge badge-error">Out of Stock</div>
-                        {% endif %}
-                        {% if product.rating >= 4.5 %}
-                            <div class="badge badge-primary">Top Rated</div>
-                        {% endif %}
+                    <div id="badges-container" class="flex items-center gap-2 flex-wrap">
+                        <!-- Dynamic badges will be inserted here -->
                     </div>
-                    <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-base-content leading-tight">
-                        {{ product.name }}
+                    <h1 id="product-title" class="text-3xl md:text-4xl lg:text-5xl font-bold text-base-content leading-tight">
+                        <!-- Title will be inserted here -->
                     </h1>
-                    <p class="text-lg text-base-content/70">by <span class="font-semibold">{{ product.brand }}</span></p>
+                    <p id="product-brand" class="text-lg text-base-content/70">
+                        <!-- Brand will be inserted here -->
+                    </p>
                 </div>
 
                 <!-- Price & Stock Section -->
@@ -71,22 +80,25 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <p class="text-sm text-base-content/70 mb-1">Price</p>
-                            <span class="text-3xl font-bold text-primary">Rp{{ product.price }}</span>
+                            <span id="product-price" class="text-3xl font-bold text-primary">
+                                <!-- Price will be inserted here -->
+                            </span>
                         </div>
                         <div>
                             <p class="text-sm text-base-content/70 mb-1">Stock Available</p>
-                            <span class="text-2xl font-semibold {% if product.stock < 10 %}text-warning{% else %}text-success{% endif %}">
-                                {{ product.stock }} units
+                            <span id="product-stock" class="text-2xl font-semibold">
+                                <!-- Stock will be inserted here -->
                             </span>
                         </div>
                     </div>
                 </div>
 
-
                 <!-- Description -->
                 <div class="space-y-3">
                     <h3 class="text-xl font-semibold text-base-content">Product Description</h3>
-                    <p class="text-base-content/80 leading-relaxed">{{ product.description }}</p>
+                    <p id="product-description" class="text-base-content/80 leading-relaxed">
+                        <!-- Description will be inserted here -->
+                    </p>
                 </div>
 
                 <!-- Product Features -->
@@ -115,114 +127,304 @@
                             <svg class="w-5 h-5 text-success" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
                             </svg>
-                            <span class="text-sm">Official {{ product.brand }} Product</span>
+                            <span id="brand-feature" class="text-sm">Official Product</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Quantity Selector -->
-                <div class="space-y-3">
+                <div id="quantity-section" class="space-y-3">
                     <h3 class="text-lg font-semibold">Quantity</h3>
                     <div class="flex items-center gap-3">
                         <button class="btn btn-sm btn-outline" onclick="decreaseQty()">-</button>
-                        <input type="number" id="quantity" value="1" min="1" max="{{ product.stock }}" 
+                        <input type="number" id="quantity" value="1" min="1" 
                                class="input input-bordered w-20 text-center">
                         <button class="btn btn-sm btn-outline" onclick="increaseQty()">+</button>
-                        <span class="text-sm text-base-content/70">Max: {{ product.stock }}</span>
+                        <span id="max-quantity" class="text-sm text-base-content/70">
+                            <!-- Max quantity will be inserted here -->
+                        </span>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="space-y-4 pt-4">
-                    {% if product.stock > 0 %}
-                        <div class="flex gap-3">
-                            <button class="btn btn-primary flex-1">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m-2.4-2L2 1M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17M17 13v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6.28"/>
-                                </svg>
-                                Add to Cart
-                            </button>
-                            <button class="btn btn-outline">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                            </button>
-                        </div>
-                        
-                        <div class="flex gap-3">
-                            <button class="btn btn-success btn-outline flex-1">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                </svg>
-                                Buy Now
-                            </button>
-                            <a href="{% url 'main:show_main' %}" class="btn btn-ghost flex-1">
-                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                                </svg>
-                                Back to Products
-                            </a>
-                        </div>
-                    {% else %}
-                        <div class="alert alert-warning">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                            </svg>
-                            <span>This item is currently out of stock. Check back later!</span>
-                        </div>
-                        <button class="btn btn-disabled w-full">Out of Stock</button>
-                    {% endif %}
+                <div id="action-buttons" class="space-y-4 pt-4">
+                    <!-- Dynamic buttons will be inserted here -->
                 </div>
 
                 <!-- Product Stats -->
                 <div class="stats stats-vertical lg:stats-horizontal shadow w-full">
                     <div class="stat">
                         <div class="stat-title">Category</div>
-                        <div class="stat-value text-sm">{{ product.get_category_display }}</div>
+                        <div id="stat-category" class="stat-value text-sm">
+                            <!-- Category will be inserted here -->
+                        </div>
                         <div class="stat-desc">Product type</div>
                     </div>
                     <div class="stat">
                         <div class="stat-title">Brand</div>
-                        <div class="stat-value text-sm">{{ product.brand }}</div>
+                        <div id="stat-brand" class="stat-value text-sm">
+                            <!-- Brand will be inserted here -->
+                        </div>
                         <div class="stat-desc">Manufacturer</div>
                     </div>
                     <div class="stat">
                         <div class="stat-title">Rating</div>
-                        <div class="stat-value text-secondary">{{ product.rating }}</div>
+                        <div id="stat-rating" class="stat-value text-secondary">
+                            <!-- Rating will be inserted here -->
+                        </div>
                         <div class="stat-desc">Out of 5.0</div>
                     </div>
-                    {% if product.user %}
-                    <div class="stat">
+                    <div id="stat-author-container" class="stat">
                         <div class="stat-title">Author</div>
-                        <div class="stat-value text-sm">{{ product.user.username }}</div>
+                        <div id="stat-author" class="stat-value text-sm">
+                            <!-- Author will be inserted here -->
+                        </div>
                     </div>
-                    {% endif %}
-
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+const PRODUCT_ID = "{{ product.id }}";
+const PRODUCT_DETAIL_ENDPOINT = `{% url 'main:show_json_by_id' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', PRODUCT_ID);
+
+const loadingState = document.getElementById('loading-state');
+const errorState = document.getElementById('error-state');
+const productContent = document.getElementById('product-content');
+const productImageContainer = document.getElementById('product-image-container');
+const categoryBadge = document.getElementById('category-badge');
+const badgesContainer = document.getElementById('badges-container');
+const productTitle = document.getElementById('product-title');
+const productBrand = document.getElementById('product-brand');
+const productPrice = document.getElementById('product-price');
+const productStock = document.getElementById('product-stock');
+const productDescription = document.getElementById('product-description');
+const brandFeature = document.getElementById('brand-feature');
+const quantitySection = document.getElementById('quantity-section');
+const quantityInput = document.getElementById('quantity');
+const maxQuantity = document.getElementById('max-quantity');
+const actionButtons = document.getElementById('action-buttons');
+const statCategory = document.getElementById('stat-category');
+const statBrand = document.getElementById('stat-brand');
+const statRating = document.getElementById('stat-rating');
+const statAuthorContainer = document.getElementById('stat-author-container');
+const statAuthor = document.getElementById('stat-author');
+
+// Show/hide page sections
+function showState(state) {
+    loadingState.classList.toggle('hidden', state !== 'loading');
+    errorState.classList.toggle('hidden', state !== 'error');
+    productContent.classList.toggle('hidden', state !== 'ready');
+}
+
+// Get readable category name
+function getCategoryLabel(categoryCode) {
+    const categoryMapping = {
+        football: 'Football',
+        jersey: 'Jersey',
+        boots: 'Boots',
+        equipment: 'Equipment',
+        accessories: 'Accessories',
+    };
+    return categoryMapping[categoryCode] || categoryCode;
+}
+
+// Render product image
+function renderProductImage(product) {
+    if (product.thumbnail) {
+        productImageContainer.innerHTML = `
+            <img src="${product.thumbnail}" alt="${product.name}"
+                class="w-full h-96 lg:h-[500px] object-cover rounded-2xl shadow-2xl">
+        `;
+    } else {
+        productImageContainer.innerHTML = `
+            <div class="w-full h-96 lg:h-[500px] bg-base-200 rounded-2xl shadow-2xl flex items-center justify-center">
+                <svg class="w-24 h-24 text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                </svg>
+            </div>
+        `;
+    }
+}
+
+// Render badges
+function renderBadges(product) {
+    badgesContainer.innerHTML = '';
+    
+    if (product.is_featured) {
+        const featuredBadge = document.createElement('div');
+        featuredBadge.className = 'badge badge-primary';
+        featuredBadge.textContent = 'Featured';
+        badgesContainer.appendChild(featuredBadge);
+    }
+    
+    if (product.stock > 0) {
+        const stockBadge = document.createElement('div');
+        stockBadge.className = 'badge badge-primary';
+        stockBadge.textContent = 'In Stock';
+        badgesContainer.appendChild(stockBadge);
+    } else {
+        const stockBadge = document.createElement('div');
+        stockBadge.className = 'badge badge-error';
+        stockBadge.textContent = 'Out of Stock';
+        badgesContainer.appendChild(stockBadge);
+    }
+    
+    if (product.rating >= 4.5) {
+        const ratingBadge = document.createElement('div');
+        ratingBadge.className = 'badge badge-primary';
+        ratingBadge.textContent = 'Top Rated';
+        badgesContainer.appendChild(ratingBadge);
+    }
+}
+
+// Render action buttons
+function renderActionButtons(product) {
+    if (product.stock > 0) {
+        actionButtons.innerHTML = `
+            <div class="flex gap-3">
+                <button class="btn btn-primary flex-1">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m-2.4-2L2 1M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17M17 13v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6.28"/>
+                    </svg>
+                    Add to Cart
+                </button>
+                <button class="btn btn-outline">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="flex gap-3">
+                <button class="btn btn-success btn-outline flex-1">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Buy Now
+                </button>
+                <a href="{% url 'main:show_main' %}" class="btn btn-ghost flex-1">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Back to Products
+                </a>
+            </div>
+        `;
+    } else {
+        actionButtons.innerHTML = `
+            <div class="alert alert-warning">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                <span>This item is currently out of stock. Check back later!</span>
+            </div>
+            <button class="btn btn-disabled w-full">Out of Stock</button>
+        `;
+    }
+}
+
+// Render product content
+function renderProduct(product) {
+    // Set title
+    productTitle.textContent = product.name;
+    document.title = `${product.name} - KickStack`;
+    
+    // Set brand
+    productBrand.innerHTML = `by <span class="font-semibold">${product.brand}</span>`;
+    
+    // Set price
+    productPrice.textContent = `Rp${product.price}`;
+    
+    // Set stock
+    const stockClass = product.stock < 10 ? 'text-warning' : 'text-success';
+    productStock.className = `text-2xl font-semibold ${stockClass}`;
+    productStock.textContent = `${product.stock} units`;
+    
+    // Set description
+    productDescription.textContent = product.description;
+    
+    // Set category
+    const categoryLabel = getCategoryLabel(product.category);
+    categoryBadge.textContent = categoryLabel;
+    
+    // Set brand feature
+    brandFeature.textContent = `Official ${product.brand} Product`;
+    
+    // Set quantity max
+    quantityInput.setAttribute('max', product.stock);
+    maxQuantity.textContent = `Max: ${product.stock}`;
+    
+    // Set stats
+    statCategory.textContent = categoryLabel;
+    statBrand.textContent = product.brand;
+    statRating.textContent = product.rating;
+    
+    // Set author if available
+    if (product.username) {
+        statAuthor.textContent = product.username;
+        statAuthorContainer.style.display = 'block';
+    } else {
+        statAuthorContainer.style.display = 'none';
+    }
+    
+    // Render components
+    renderProductImage(product);
+    renderBadges(product);
+    renderActionButtons(product);
+    
+    // Show/hide quantity section based on stock
+    if (product.stock > 0) {
+        quantitySection.style.display = 'block';
+    } else {
+        quantitySection.style.display = 'none';
+    }
+}
+
+// Quantity functions
 function increaseQty() {
-    const qtyInput = document.getElementById('quantity');
-    const currentQty = parseInt(qtyInput.value);
-    const maxQty = parseInt(qtyInput.getAttribute('max'));
+    const currentQty = parseInt(quantityInput.value);
+    const maxQty = parseInt(quantityInput.getAttribute('max'));
     
     if (currentQty < maxQty) {
-        qtyInput.value = currentQty + 1;
+        quantityInput.value = currentQty + 1;
     }
 }
 
 function decreaseQty() {
-    const qtyInput = document.getElementById('quantity');
-    const currentQty = parseInt(qtyInput.value);
-    const minQty = parseInt(qtyInput.getAttribute('min'));
+    const currentQty = parseInt(quantityInput.value);
+    const minQty = parseInt(quantityInput.getAttribute('min'));
     
     if (currentQty > minQty) {
-        qtyInput.value = currentQty - 1;
+        quantityInput.value = currentQty - 1;
     }
 }
-</script>
 
-{% endblock %}
+// Fetch product detail
+async function loadProductDetail() {
+    try {
+        showState('loading');
+        
+        const response = await fetch(PRODUCT_DETAIL_ENDPOINT, {
+            headers: { 'Accept': 'application/json' },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch product detail');
+        }
+
+        const productData = await response.json();
+        renderProduct(productData);
+        showState('ready');
+    } catch (error) {
+        console.error('Error loading product detail:', error);
+        showState('error');
+    }
+}
+
+console.log("Loading product detail for ID:", PRODUCT_ID);
+loadProductDetail();
+</script>
+{% endblock content %}

@@ -6,11 +6,13 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 import datetime
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
-
 from main.forms import ProductForm
 from main.models import Product
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.utils.html import strip_tags
 
 
 # Create your views here.
@@ -66,8 +68,25 @@ def show_xml(request):
 
 def show_json(request):
     products_list = Product.objects.all()
-    json_data = serializers.serialize("json", products_list)
-    return HttpResponse(json_data, content_type="application/json")
+    data = [
+        {
+            "id": str(product.id),
+            "name": product.name,
+            "price": str(product.price),
+            "description": product.description,
+            "stock": product.stock,
+            "user_id": product.user_id,
+            "created_at": product.created_at.isoformat(),
+            "updated_at": product.updated_at.isoformat(),
+            "category": product.category,
+            "brand": product.brand,
+            "rating": str(product.rating),
+            "thumbnail": product.thumbnail,
+            "is_featured": product.is_featured,
+        }
+        for product in products_list
+    ]
+    return JsonResponse(data, safe=False)
 
 
 def show_xml_by_id(request, product_id):
@@ -82,10 +101,25 @@ def show_xml_by_id(request, product_id):
 def show_json_by_id(request, product_id):
     try:
         products_item = Product.objects.get(pk=product_id)
-        json_data = serializers.serialize("json", [products_item])
-        return HttpResponse(json_data, content_type="application/json")
+        data = {
+            "id": str(products_item.id),
+            "name": products_item.name,
+            "price": str(products_item.price),
+            "description": products_item.description,
+            "thumbnail": products_item.thumbnail,
+            "is_featured": products_item.is_featured,
+            "rating": str(products_item.rating),
+            "stock": products_item.stock,
+            "user_id": products_item.user_id,
+            "created_at": products_item.created_at.isoformat(),
+            "updated_at": products_item.updated_at.isoformat(),
+            "category": products_item.category,
+            "brand": products_item.brand,
+            "username": products_item.user.username if products_item.user else None,
+        }
+        return JsonResponse(data)
     except Product.DoesNotExist:
-        return HttpResponse(status=404)
+        return JsonResponse({"detail": "Not found"}, status=404)
 
 
 def register(request):
@@ -141,3 +175,34 @@ def delete_product(request, id):
     product = get_object_or_404(Product, pk=id)
     product.delete()
     return HttpResponseRedirect(reverse("main:show_main"))
+
+
+@csrf_exempt
+@require_POST
+def add_product_entry_ajax(request):
+    name = strip_tags(request.POST.get("name"))
+    price = strip_tags(request.POST.get("price"))
+    description = strip_tags(request.POST.get("description"))
+    stock = strip_tags(request.POST.get("stock"))
+    category = strip_tags(request.POST.get("category"))
+    brand = strip_tags(request.POST.get("brand"))
+    thumbnail = strip_tags(request.POST.get("thumbnail"))
+    is_featured = request.POST.get("is_featured") == "true"
+    rating = request.POST.get("rating", 0)
+    user = request.user
+
+    new_product = Product(
+        name=name,
+        price=price,
+        description=description,
+        stock=stock,
+        category=category,
+        brand=brand,
+        thumbnail=thumbnail,
+        is_featured=is_featured,
+        rating=rating,
+        user=user,
+    )
+
+    new_product.save()
+    return HttpResponse(b"Product created successfully", status=201)
