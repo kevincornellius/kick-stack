@@ -33,7 +33,7 @@
                 {% endif %}
 
                 <!-- Login Form -->
-                <form method="POST" action="" class="space-y-6">
+                <form id="loginForm" class="space-y-6">
                     {% csrf_token %}
                     
                     <!-- Username Field -->
@@ -41,7 +41,7 @@
                         <label class="label">
                             <span class="label-text font-semibold">Username</span>
                         </label>
-                        {{ form.username }}
+                        <input id="username" name="username" type="text" class="input input-bordered w-full" placeholder="Enter your username" required>
                     </div>
 
                     <!-- Password Field -->
@@ -49,16 +49,17 @@
                         <label class="label">
                             <span class="label-text font-semibold">Password</span>
                         </label>
-                        {{ form.password }}
+                        <input id="password" name="password" type="password" class="input input-bordered w-full" placeholder="Enter your password" required>
                     </div>
 
                     <!-- Login Button -->
                     <div class="form-control mt-8">
-                        <button type="submit" class="btn btn-primary btn-block btn-lg">
+                        <button type="submit" id="loginBtn" class="btn btn-primary btn-block btn-lg">
                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
                             </svg>
-                            Sign In
+                            <span class="btn-text">Sign In</span>
+                            <span class="loading loading-spinner loading-sm hidden"></span>
                         </button>
                     </div>
                 </form>
@@ -77,6 +78,59 @@
 
     </div>
 </div>
+
+
+<script>
+
+async function handleLogin(event) {
+  event.preventDefault();
+  
+  const loginBtn = document.getElementById('loginBtn');
+  const btnText = loginBtn.querySelector('.btn-text');
+  const loadingSpinner = loginBtn.querySelector('.loading');
+  
+  // Show loading state
+  loginBtn.disabled = true;
+  btnText.textContent = 'Signing In...';
+  loadingSpinner.classList.remove('hidden');
+  
+  try {
+    const formData = new FormData(document.getElementById('loginForm'));
+    
+    const response = await fetch("{% url 'main:login_ajax' %}", {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}'
+      }
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      showToast('Welcome Back!', result.message, 'success');
+      
+      // Redirect after a short delay
+      setTimeout(() => {
+        window.location.href = result.redirect;
+      }, 1500);
+    } else {
+      showToast('Login Failed', result.message, 'error');
+    }
+    
+  } catch (error) {
+    console.error('Login error:', error);
+    showToast('Error!', 'An unexpected error occurred. Please try again.', 'error');
+  } finally {
+    // Reset button state
+    loginBtn.disabled = false;
+    btnText.textContent = 'Sign In';
+    loadingSpinner.classList.add('hidden');
+  }
+}
+
+document.getElementById('loginForm').addEventListener('submit', handleLogin);
+</script>
 
 
 {% endblock content %}

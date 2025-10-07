@@ -1,0 +1,217 @@
+<!-- Modal -->
+<div id="editModal" class="hidden fixed inset-0 z-50 w-full flex items-center justify-center bg-gray-800/50">
+  <div id="editModalContent" class="bg-white rounded-lg shadow-lg w-5/6 sm:w-4/5 md:w-3/4 lg:w-2/3 xl:w-1/2 max-h-[80%]  overflow-y-auto">
+    <!-- Modal header -->
+    <div class="flex items-center justify-between p-4 border-b">
+      <div>
+        <h3 class="text-xl font-semibold text-gray-900">
+          Edit Product
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">Edit the details of the selected product</p>
+      </div>
+      <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center" onclick="hideEditModal()">
+        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="sr-only">Close modal</span>
+      </button>
+    </div>
+    <!-- Modal body -->
+    <div class="px-6 py-4 space-y-6 form-style">
+      <form id="productEditForm">
+        <input type="hidden" id="productId" name="id" value="">
+        
+        <!-- Product Name -->
+        <div class="mb-4">
+          <label for="name" class="block text-sm font-medium text-gray-700">Product Name *</label>
+          <input type="text" id="name" name="name" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter product name" required>
+        </div>
+        
+        <!-- Brand and Category Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="brand" class="block text-sm font-medium text-gray-700">Brand *</label>
+            <input type="text" id="brand" name="brand" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Enter brand name" required>
+          </div>
+          <div>
+            <label for="category" class="block text-sm font-medium text-gray-700">Category *</label>
+            <select id="category" name="category" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" required>
+              <option value="">Choose a category</option>
+              <option value="shoes">Football Shoes</option>
+              <option value="jersey">Jerseys & Kits</option>
+              <option value="ball">Footballs</option>
+              <option value="gloves">Goalkeeper Gloves</option>
+              <option value="accessories">Accessories</option>
+              <option value="training">Training Equipment</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Price and Stock Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="price" class="block text-sm font-medium text-gray-700">Price (IDR) *</label>
+            <input type="number" id="price" name="price" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="0" min="0" step="0.01" required>
+          </div>
+          <div>
+            <label for="stock" class="block text-sm font-medium text-gray-700">Stock Quantity *</label>
+            <input type="number" id="stock" name="stock" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="0" min="0" required>
+          </div>
+        </div>
+        
+        <!-- Rating and Thumbnail Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label for="rating" class="block text-sm font-medium text-gray-700">Rating (0.0 - 5.0)</label>
+            <input type="number" id="rating" name="rating" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="0.0" min="0" max="5" step="0.1" value="0">
+          </div>
+          <div>
+            <label for="thumbnail" class="block text-sm font-medium text-gray-700">Product Image URL</label>
+            <input type="url" id="thumbnail" name="thumbnail" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://example.com/image.jpg">
+          </div>
+        </div>
+        
+        <!-- Description -->
+        <div class="mb-4">
+          <label for="description" class="block text-sm font-medium text-gray-700">Product Description *</label>
+          <textarea id="description" name="description" rows="3" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Describe the product features, quality, and benefits" required></textarea>
+        </div>
+        
+        <div class="mb-4">
+          <div class="flex items-center">
+            <input id="is_featured_edit" name="is_featured" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded">
+            <label for="is_featured_edit" class="ml-2 text-sm font-medium text-gray-900">Featured Product</label>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Modal footer -->
+    <div class="flex flex-col sm:flex-row gap-4 p-6 border-t border-gray-200 rounded-b">
+      <button type="button" id="cancelButton" class="order-2 sm:order-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-md font-medium hover:bg-gray-50 transition-colors text-center" onclick="hideEditModal()">Cancel</button>
+      <button type="submit" id="submitProduct" form="productEditForm" class="order-1 sm:order-2 flex-1 bg-primary text-white px-6 py-3 rounded-md font-medium hover:bg-primary/90 transition-colors">Update Product</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentEditingProductId = null;
+
+  async function showEditModal(productId) {
+      const modal = document.getElementById('editModal');
+      const modalContent = document.getElementById('editModalContent');
+
+      // Store the product ID for editing
+      currentEditingProductId = productId;
+      
+      try {
+        // Fetch product data from server
+        const response = await fetch(`{% url 'main:show_json_by_id' 0 %}`.replace('0', productId));
+        if (!response.ok) {
+          throw new Error('Failed to fetch product data');
+        }
+        
+        const productData = await response.json();
+        
+        // Populate form with existing data
+        document.getElementById('productId').value = productData.id || '';
+        document.getElementById('name').value = productData.name || '';
+        document.getElementById('brand').value = productData.brand || '';
+        
+        const categorySelect = document.getElementById('category');
+        categorySelect.value = productData.category || '';
+        // Force trigger change event to ensure selection is visible
+        categorySelect.dispatchEvent(new Event('change'));
+        
+        document.getElementById('price').value = productData.price || '';
+        document.getElementById('stock').value = productData.stock || '';
+        document.getElementById('rating').value = productData.rating || '0';
+        document.getElementById('thumbnail').value = productData.thumbnail || '';
+        document.getElementById('description').value = productData.description || '';
+        document.getElementById('is_featured_edit').checked = productData.is_featured || false;
+
+        modal.classList.remove('hidden'); 
+        setTimeout(() => {
+          modalContent.classList.remove('opacity-0', 'scale-95');
+          modalContent.classList.add('opacity-100', 'scale-100');
+        }, 50);
+        
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+        if (typeof showToast === 'function') {
+          showToast('Error!', 'Failed to load product data', 'error');
+        }
+      }
+  }
+
+  function hideEditModal() {
+      const modal = document.getElementById('editModal');
+      const modalContent = document.getElementById('editModalContent');
+
+      modalContent.classList.remove('opacity-100', 'scale-100');
+      modalContent.classList.add('opacity-0', 'scale-95');
+
+      setTimeout(() => {
+        modal.classList.add('hidden');
+        // Reset form and product ID
+        document.getElementById('productEditForm').reset();
+        currentEditingProductId = null;
+      }, 150); 
+  }
+
+  async function editProductEntry() {
+    if (!currentEditingProductId) {
+      showToast('Error!', 'No product selected for editing', 'error');
+      return;
+    }
+
+    try {
+      const formData = new FormData(document.querySelector('#productEditForm'));
+      
+      const isFeaturedCheckbox = document.getElementById('is_featured_edit');
+      formData.set('is_featured', isFeaturedCheckbox.checked ? 'true' : 'false');
+      
+      const response = await fetch("{% url 'main:edit_product_ajax' %}", {
+        method: "POST",
+        body: formData,
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}'
+        }
+      });
+
+      if (response.ok) {
+        hideEditModal();
+        
+        showToast('Success!', 'Product updated successfully', 'success');
+
+        // Dispatch custom event to notify main.html about updated data
+        document.dispatchEvent(new CustomEvent('productUpdated'));
+      } else {
+        const errorText = await response.text();
+        showToast('Error!', `Failed to update product: ${errorText}`, 'error');
+      }
+    } catch (error) {
+      console.error('Error updating product:', error);
+      showToast('Error!', 'Failed to update product. Please try again.', 'error');
+    }
+
+    return false;
+  }
+
+  document.addEventListener('productUpdated', function() {
+    // Refresh data without page reload
+    if (typeof fetchProductsFromServer === 'function') {
+      fetchProductsFromServer();
+    }
+  });
+
+  document.getElementById("productEditForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      editProductEntry();
+  });
+
+  window.showEditModal = showEditModal;
+  window.hideEditModal = hideEditModal;
+//   window.showModal = showEditModal;
+//   window.hideModal = hideEditModal;
+
+</script>

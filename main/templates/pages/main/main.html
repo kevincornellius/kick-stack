@@ -93,6 +93,12 @@
                         </svg>
                         My Products
                     </button>
+                    <button id="refresh-products" class="btn btn-outline btn-sm" onclick="handleRefreshProducts()">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        </svg>
+                        Refresh
+                    </button>
                 </div>
 
                 <!-- User Actions -->
@@ -112,16 +118,16 @@
                             </svg>
                             Add Product
                         </a>
-                        <button onclick="showModal()" class="inline-flex items-center px-4 py-2 bg-white text-green-600 font-semibold outline outline-2 outline-green-600 outline-offset-[-2px] rounded-md hover:bg-green-600 hover:text-white transition-colors mb-4">
+                        <button onclick="showModal()" class="btn btn-primary btn-sm gap-2">
                             Create Product by AJAX
                         </button>
                         <!-- Logout Button -->
-                        <a href="{% url 'main:logout' %}" class="btn btn-ghost btn-sm gap-2">
+                        <button onclick="handleLogout()" class="btn btn-ghost btn-sm gap-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                             </svg>
                             Logout
-                        </a>
+                        </button>
                     {% endif %}
                 </div>
             </div>
@@ -194,269 +200,338 @@
 </div>
 
 <script>
-const PRODUCTS_API_ENDPOINT = "{% url 'main:show_json' %}";
-const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
+    const PRODUCTS_API_ENDPOINT = "{% url 'main:show_json' %}";
+    const CURRENT_USER_ID = "{{ user.id|default_if_none:'' }}";
 
-const loadingSpinner = document.getElementById('loading');
-const errorMessage = document.getElementById('error');
-const emptyStateDisplay = document.getElementById('empty');
-const productGridContainer = document.getElementById('product-grid');
-const showAllProductsButton = document.getElementById('filter-all');
-const showMyProductsButton = document.getElementById('filter-my');
-const retryButton = document.getElementById('retry-btn');
-const emptyMessageSpan = document.getElementById('empty-message');
+    const loadingSpinner = document.getElementById('loading');
+    const errorMessage = document.getElementById('error');
+    const emptyStateDisplay = document.getElementById('empty');
+    const productGridContainer = document.getElementById('product-grid');
+    const showAllProductsButton = document.getElementById('filter-all');
+    const showMyProductsButton = document.getElementById('filter-my');
+    const retryButton = document.getElementById('retry-btn');
+    const emptyMessageSpan = document.getElementById('empty-message');
 
-// State Variables
-let activeFilter = 'all';
-let allProductsData = [];
+    // State Variables
+    let activeFilter = 'all';
+    let allProductsData = [];
 
-// Update filter button appearance
-function updateFilterButtonsAppearance() {
-  if (!showAllProductsButton || !showMyProductsButton) return;
-  
-  if (activeFilter === 'all') {
-    showAllProductsButton.className = 'btn btn-primary btn-sm';
-    showMyProductsButton.className = 'btn btn-outline btn-sm';
-  } else {
-    showMyProductsButton.className = 'btn btn-primary btn-sm';
-    showAllProductsButton.className = 'btn btn-outline btn-sm';
-  }
-}
+    // Update filter button appearance
+    function updateFilterButtonsAppearance() {
+    if (!showAllProductsButton || !showMyProductsButton) return;
+    
+    if (activeFilter === 'all') {
+        showAllProductsButton.className = 'btn btn-primary btn-sm';
+        showMyProductsButton.className = 'btn btn-outline btn-sm';
+    } else {
+        showMyProductsButton.className = 'btn btn-primary btn-sm';
+        showAllProductsButton.className = 'btn btn-outline btn-sm';
+    }
+    }
 
-// Show/hide page sections
-function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
-  loadingSpinner.classList.toggle('hidden', !showLoading);
-  errorMessage.classList.toggle('hidden', !showError);
-  emptyStateDisplay.classList.toggle('hidden', !showEmpty);
-  productGridContainer.classList.toggle('hidden', !showGrid);
-  
-  // Add grid classes when showing grid
-  if (showGrid) {
-    productGridContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
-  }
-}
+    // Show/hide page sections
+    function displayPageSection({ showLoading = false, showError = false, showEmpty = false, showGrid = false }) {
+    loadingSpinner.classList.toggle('hidden', !showLoading);
+    errorMessage.classList.toggle('hidden', !showError);
+    emptyStateDisplay.classList.toggle('hidden', !showEmpty);
+    productGridContainer.classList.toggle('hidden', !showGrid);
+    
+    // Add grid classes when showing grid
+    if (showGrid) {
+        productGridContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
+    }
+    }
 
-// Get readable category name
-function getReadableCategoryName(categoryCode) {
-  const categoryMapping = {
-    'shoes': 'Football Shoes',
-    'jersey': 'Jerseys & Kits',
-    'ball': 'Footballs',
-    'gloves': 'Goalkeeper Gloves',
-    'accessories': 'Accessories',
-    'training': 'Training Equipment',
-  };
-  return categoryMapping[categoryCode] || categoryCode;
-}
+    // Get readable category name
+    function getReadableCategoryName(categoryCode) {
+    const categoryMapping = {
+        'shoes': 'Football Shoes',
+        'jersey': 'Jerseys & Kits',
+        'ball': 'Footballs',
+        'gloves': 'Goalkeeper Gloves',
+        'accessories': 'Accessories',
+        'training': 'Training Equipment',
+    };
+    return categoryMapping[categoryCode] || categoryCode;
+    }
 
-// Create product card element
-function buildProductCardElement(product) {
-    const productElement = document.createElement('div');
-    productElement.className = 'card z-0 bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 group';
+    // Create product card element
+    function buildProductCardElement(product) {
+        const productElement = document.createElement('div');
+        productElement.className = 'card z-0 bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 group';
 
-    const detailLink = `product/${product.id}`;
-    const editLink = `{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', product.id);
-    const deleteLink = `{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', product.id);
+        const detailLink = `product/${product.id}`;
+        const editLink = `{% url 'main:edit_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', product.id);
+        const deleteLink = `{% url 'main:delete_product' '00000000-0000-0000-0000-000000000000' %}`.replace('00000000-0000-0000-0000-000000000000', product.id);
 
-    const categoryLabel = getReadableCategoryName(product.category);
-    const isFeatured = product.is_featured;
+        const categoryLabel = getReadableCategoryName(product.category);
+        const isFeatured = product.is_featured;
 
-    const name = DOMPurify.sanitize(product.name);
-    const description = DOMPurify.sanitize(product.description);
-    const price = DOMPurify.sanitize(product.price);  
-    const stock = DOMPurify.sanitize(product.stock);
-    const brand = DOMPurify.sanitize(product.brand);
-    const rating = DOMPurify.sanitize(product.rating);
+        const name = DOMPurify.sanitize(product.name);
+        const description = DOMPurify.sanitize(product.description);
+        const price = DOMPurify.sanitize(product.price);  
+        const stock = DOMPurify.sanitize(product.stock);
+        const brand = DOMPurify.sanitize(product.brand);
+        const rating = DOMPurify.sanitize(product.rating);
 
-  const thumbnailHtml = DOMPurify.sanitize( 
-    product.thumbnail
-      ? `<img src='${product.thumbnail}' alt='${name}' class='w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-300'>`
-      : `<div class='w-full h-full flex items-center justify-center'>
-        <svg class='w-16 h-16 text-base-content/30' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-          <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'/>
-        </svg>
-      </div>`);
+    const thumbnailHtml = DOMPurify.sanitize( 
+        product.thumbnail
+        ? `<img src='${product.thumbnail}' alt='${name}' class='w-full h-full object-contain p-4 group-hover:scale-110 transition-transform duration-300'>`
+        : `<div class='w-full h-full flex items-center justify-center'>
+            <svg class='w-16 h-16 text-base-content/30' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+            <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'/>
+            </svg>
+        </div>`);
 
-  const stockBadge = stock == 0 
-    ? `<div class='badge badge-error badge-sm'>Out of Stock</div>`
-    : stock < 10 
-    ? `<div class='badge badge-warning badge-sm'>Low Stock</div>`
-    : '';
+    const stockBadge = stock == 0 
+        ? `<div class='badge badge-error badge-sm'>Out of Stock</div>`
+        : stock < 10 
+        ? `<div class='badge badge-warning badge-sm'>Low Stock</div>`
+        : '';
 
-  const myProductBadge = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)
-    ? `<div class='badge badge-success badge-sm'>My Product</div>`
-    : '';
+    const myProductBadge = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)
+        ? `<div class='badge badge-success badge-sm'>My Product</div>`
+        : '';
 
-  const featuredBadge = isFeatured 
-    ? `<div class='badge badge-primary badge-sm'>Featured</div>` 
-    : '';
+    const featuredBadge = isFeatured 
+        ? `<div class='badge badge-primary badge-sm'>Featured</div>` 
+        : '';
 
-  const ratingHtml = rating > 0 
-    ? `<div class='flex items-center gap-1'>
-        <span class='text-sm font-medium'>${rating}</span>
-        <svg class='w-4 h-4 text-warning fill-current' viewBox='0 0 20 20'>
-          <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z'/>
-        </svg>
-      </div>`
-    : '';
+    const ratingHtml = rating > 0 
+        ? `<div class='flex items-center gap-1'>
+            <span class='text-sm font-medium'>${rating}</span>
+            <svg class='w-4 h-4 text-warning fill-current' viewBox='0 0 20 20'>
+            <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z'/>
+            </svg>
+        </div>`
+        : '';
 
-  const editDeleteButtons = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)
-    ? `<div class='flex gap-2 w-full'>
-        <a href='${editLink}' class='flex-1'>
-          <button class='btn btn-outline btn-sm w-full'>
+    const editDeleteButtons = CURRENT_USER_ID && Number(CURRENT_USER_ID) === Number(product.user_id)
+        ? `<div class='flex gap-2 w-full'>
+            <button class='btn btn-outline btn-sm w-full flex-1' onclick='showEditModal("${product.id}")'>
             <svg class='w-4 h-4 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-              <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
+                <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z'/>
             </svg>
             Edit
-          </button>
-        </a>
-        <a href='${deleteLink}' class='flex-1'>
-          <button class='btn btn-outline btn-error btn-sm w-full' onclick='return confirm("Are you sure you want to delete this product?")'>
-            <svg class='w-4 h-4 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-              <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
-            </svg>
-            Delete
-          </button>
-        </a>
-      </div>`
-    : '';
+            </button>
+            <button onclick='showDeleteModal("${product.id}")' class='btn btn-outline btn-error btn-sm w-fit'>
+                <svg class='w-4 h-4 mr-1' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16'/>
+                </svg>
+                Delete
+            </button>
+        </div>`
+        : '';
 
-  const completeCardHtml = `
-    <figure class="relative overflow-hidden bg-base-200 h-64">
-      ${thumbnailHtml}
-      
-      <!-- Product Badges -->
-      <div class="absolute top-3 left-3 flex flex-col gap-1">
-        ${myProductBadge}
-        ${featuredBadge}
-        ${stockBadge}
-      </div>
-
-      <!-- Hover Overlay -->
-      <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-        <button class="btn btn-primary" onclick="window.location.href='${detailLink}'">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-          </svg>
-          Quick View
-        </button>
-      </div>
-    </figure>
-    
-    <!-- Product Info -->
-    <div class="card-body p-6">
-      <div class="badge badge-outline badge-sm mb-2">${categoryLabel}</div>
-      
-      <h3 class="card-title text-lg font-bold leading-tight mb-2 line-clamp-2">
-        ${name}
-      </h3>
-      
-      <div class="space-y-2 mb-4">
-        <p class="text-base-content/70 text-sm">${brand}</p>
-        <div class="flex items-center justify-between">
-          <span class="text-2xl font-bold text-primary">Rp${price}</span>
-          ${ratingHtml}
-        </div>
-      </div>
-      
-      <div class="card-actions flex-col gap-2">
-        <button class="btn btn-primary w-full" onclick="window.location.href='${detailLink}'">
-          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-          </svg>
-          View Details
-        </button>
+    const completeCardHtml = `
+        <figure class="relative overflow-hidden bg-base-200 h-64">
+        ${thumbnailHtml}
         
-        ${editDeleteButtons}
-      </div>
-    </div>
-  `;
+        <!-- Product Badges -->
+        <div class="absolute top-3 left-3 flex flex-col gap-1">
+            ${myProductBadge}
+            ${featuredBadge}
+            ${stockBadge}
+        </div>
 
-  productElement.innerHTML = completeCardHtml;
-  return productElement;
-}
+        <!-- Hover Overlay -->
+        <div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <button class="btn btn-primary" onclick="window.location.href='${detailLink}'">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            Quick View
+            </button>
+        </div>
+        </figure>
+        
+        <!-- Product Info -->
+        <div class="card-body p-6">
+        <div class="badge badge-outline badge-sm mb-2">${categoryLabel}</div>
+        
+        <h3 class="card-title text-lg font-bold leading-tight mb-2 line-clamp-2">
+            ${name}
+        </h3>
+        
+        <div class="space-y-2 mb-4">
+            <p class="text-base-content/70 text-sm">${brand}</p>
+            <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold text-primary">Rp${price}</span>
+            ${ratingHtml}
+            </div>
+        </div>
+        
+        <div class="card-actions flex-col gap-2">
+            <button class="btn btn-primary w-full" onclick="window.location.href='${detailLink}'">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+            </svg>
+            View Details
+            </button>
+            
+            ${editDeleteButtons}
+        </div>
+        </div>
+    `;
 
-// Render all product cards
-function renderAllProductCards(products) {
-  productGridContainer.innerHTML = '';
-  products.forEach(product => {
-    const cardElement = buildProductCardElement(product);
-    productGridContainer.appendChild(cardElement);
-  });
-}
-
-// Filter and display products
-function filterAndDisplayProducts() {
-  updateFilterButtonsAppearance();
-  
-  const filteredProducts = activeFilter === 'all' 
-    ? allProductsData 
-    : allProductsData.filter(product => Number(product.user_id) === Number(CURRENT_USER_ID));
-  
-  if (filteredProducts.length === 0) {
-    // Update empty message based on filter
-    if (activeFilter === 'my') {
-      emptyMessageSpan.textContent = "You haven't added any products yet. Start building your football equipment catalog!";
-    } else {
-      emptyMessageSpan.textContent = "No products available. Be the first to add football equipment to the catalog!";
+    productElement.innerHTML = completeCardHtml;
+    return productElement;
     }
-    displayPageSection({ showEmpty: true });
-  } else {
-    renderAllProductCards(filteredProducts);
-    displayPageSection({ showGrid: true });
-  }
-}
 
-// Fetch products data from server
-async function fetchProductsFromServer() {
-  try {
-    displayPageSection({ showLoading: true });
-    
-    const response = await fetch(PRODUCTS_API_ENDPOINT, {
-      headers: { 'Accept': 'application/json' },
+    // Render all product cards
+    function renderAllProductCards(products) {
+    productGridContainer.innerHTML = '';
+    products.forEach(product => {
+        const cardElement = buildProductCardElement(product);
+        productGridContainer.appendChild(cardElement);
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch products data from server');
     }
 
-    const productsData = await response.json();
-    allProductsData = productsData || [];
+    // Filter and display products
+    function filterAndDisplayProducts() {
+    updateFilterButtonsAppearance();
     
+    const filteredProducts = activeFilter === 'all' 
+        ? allProductsData 
+        : allProductsData.filter(product => Number(product.user_id) === Number(CURRENT_USER_ID));
+    
+    if (filteredProducts.length === 0) {
+        // Update empty message based on filter
+        if (activeFilter === 'my') {
+        emptyMessageSpan.textContent = "You haven't added any products yet. Start building your football equipment catalog!";
+        } else {
+        emptyMessageSpan.textContent = "No products available. Be the first to add football equipment to the catalog!";
+        }
+        displayPageSection({ showEmpty: true });
+    } else {
+        renderAllProductCards(filteredProducts);
+        displayPageSection({ showGrid: true });
+    }
+    }
+
+    // Fetch products data from server
+    async function fetchProductsFromServer() {
+    try {
+        displayPageSection({ showLoading: true });
+        
+        const response = await fetch(PRODUCTS_API_ENDPOINT, {
+        headers: { 'Accept': 'application/json' },
+        });
+
+        if (!response.ok) {
+        throw new Error('Failed to fetch products data from server');
+        }
+
+        const productsData = await response.json();
+        allProductsData = productsData || [];
+        
+        filterAndDisplayProducts();
+    } catch (error) {
+        console.error('Error loading products:', error);
+        displayPageSection({ showError: true });
+    }
+    }
+
+    // Event handlers
+    function handleShowAllProductsClick() {
+    activeFilter = 'all';
     filterAndDisplayProducts();
-  } catch (error) {
-    console.error('Error loading products:', error);
-    displayPageSection({ showError: true });
-  }
-}
+    }
 
-// Event handlers
-function handleShowAllProductsClick() {
-  activeFilter = 'all';
-  filterAndDisplayProducts();
-}
+    function handleShowMyProductsClick() {
+    activeFilter = 'my';
+    filterAndDisplayProducts();
+    }
 
-function handleShowMyProductsClick() {
-  activeFilter = 'my';
-  filterAndDisplayProducts();
-}
+    function handleRetryClick() {
+    fetchProductsFromServer();
+    }
 
-function handleRetryClick() {
-  fetchProductsFromServer();
-}
+    // Refresh products function
+    async function handleRefreshProducts() {
+    const refreshButton = document.getElementById('refresh-products');
+    const refreshIcon = refreshButton.querySelector('svg');
+    
+    refreshButton.disabled = true;
+    refreshIcon.classList.add('animate-spin');
+    
+    try {
+        if (typeof showToast === 'function') {
+        showToast('Refreshing...', 'Loading latest products', 'info');
+        }
+        
+        // Fetch fresh data from server
+        await fetchProductsFromServer();
+        
+        if (typeof showToast === 'function') {
+        showToast('Success!', 'Products refreshed successfully', 'success');
+        }
+    } catch (error) {
+        console.error('Refresh error:', error);
+        if (typeof showToast === 'function') {
+        showToast('Error!', 'Failed to refresh products', 'error');
+        }
+    } finally {
+        setTimeout(() => {
+        refreshButton.disabled = false;
+        refreshIcon.classList.remove('animate-spin');
+        }, 500); // Small delay to show completion
+    }
+    }
 
-// Initialize page
-function initializeProductsPage() {
-  showAllProductsButton.addEventListener('click', handleShowAllProductsClick);
-  showMyProductsButton.addEventListener('click', handleShowMyProductsClick);
-  retryButton.addEventListener('click', handleRetryClick);
-  
-  fetchProductsFromServer();
-}
+    // Initialize page
+    function initializeProductsPage() {
+    showAllProductsButton.addEventListener('click', handleShowAllProductsClick);
+    showMyProductsButton.addEventListener('click', handleShowMyProductsClick);
+    retryButton.addEventListener('click', handleRetryClick);
+    
+    fetchProductsFromServer();
+    }
 
-// Start application
-initializeProductsPage();
+    // Start application
+    initializeProductsPage();
+
+    async function handleLogout() {
+    try {
+        const response = await fetch("{% url 'main:logout_ajax' %}", {
+        method: "POST",
+            headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            },
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+        if (typeof showToast === "function") {
+            showToast("Success!", result.message, "success");
+        }
+
+        setTimeout(() => {
+            window.location.href = result.redirect;
+        }, 1500);
+        } else {
+        if (typeof showToast === "function") {
+            showToast("Error!", result.message, "error");
+        }
+        }
+    } catch (error) {
+        console.error("Logout error:", error);
+        if (typeof showToast === "function") {
+        showToast(
+            "Error!",
+            "An unexpected error occurred during logout.",
+            "error"
+        );
+        }
+    }
+    }
+
 </script>
+
+{% include 'partials/modal_edit.html' %}
+{% include 'partials/modal_delete.html' %}
+
 {% endblock %}
